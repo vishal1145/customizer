@@ -1,0 +1,5 @@
+[
+    { "Code": "ACC011", "Text": "Link Expired" },
+    { "Code": "ACC013", "Text": "Link Verified" },
+    { "Code": "ACC012", "Text": "Unknown Error"}
+]

@@ -10,7 +10,9 @@ import {
 } from '../customizer-data.service';
 import {ViewerService} from '../viewer.service';
 import {Subscription} from 'rxjs';
-import {UndoMgr} from './undo-manager';
+import { UndoMgr } from './undo-manager';
+import { APIService } from '../../providers/api-service';
+import { FormsModule } from '@angular/forms';
 declare var $: any;
 
 export interface DeepActiveAppearanceTracking {
@@ -22,7 +24,8 @@ export interface DeepActiveAppearanceTracking {
 @Component({
     selector: 'app-appearance-controls',
     templateUrl: './appearance-controls.component.html',
-    styleUrls: ['./appearance-controls.component.css']
+    styleUrls: ['./appearance-controls.component.css'],
+    providers: [APIService]
 })
 export class AppearanceControlsComponent implements OnDestroy {
     @ViewChild('optionsContainer')
@@ -42,7 +45,8 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     packArray = [{name:'test1'},{name:'test2'}];
-    constructor(private customizerDataService: CustomizerDataService, private viewerService: ViewerService) {
+    constructor(private customizerDataService: CustomizerDataService, private apiService: APIService,
+      private viewerService: ViewerService) {
         this.initializeSubscription = viewerService.initialized.subscribe(() => {
             this.viewerInitialized();
         });
@@ -55,6 +59,20 @@ export class AppearanceControlsComponent implements OnDestroy {
             this.viewerReset();
         });
     }
+
+    name: any;
+    colorCode: any = "#ffff";
+    type: any = "MATERIALS";
+    interactionValue: any = "new material";
+    image: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
+    isMetal: boolean = false;
+    visible: boolean = false;
+    roughness: any = 0.5;
+    visibleInColor: boolean = false;
+    colorCodeInColor: any;
+    colorName: any;
+    visibleInPattern: boolean = false;
+    patternName: any;
 
     undoManagerLimit() {
         return UndoMgr.getInstance().getIndex() + 1;
@@ -69,8 +87,15 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     changeSection(event: MouseEvent, section: AppearanceSection) {
-        this.activeTracking().activeSection = section;
-
+      this.activeTracking().activeSection = section;
+      console.log(section.name)
+      if (section.name == "Material") {
+        this.type = "MATERIALS"
+      } else if (section.name == "Color"){
+        this.type = "COLORS"
+      } else if (section.name == "Patterns") {
+        this.type = "PATTERNS"
+      }
         return this.stopEvent(event);
     }
 
@@ -391,39 +416,109 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     openModel()
     {
+      if (this.type == "MATERIALS")
+      {
         $('#my-modal').show()
-
-    }
-
-    addColor()
-    {
+      }
+      else if (this.type == "COLORS")
+      {
         $('#addColor').show()
-
+      }
+      else if (this.type == "PATTERNS")
+      {
+        $('#patterns').show()
+      }
     }
-    closeaddColormodal()
-    {
-        $('#addColor').hide()
 
+
+    closemodal() {
+      $('#my-modal').hide()
+    } 
+
+    closeColoremodal() {
+      $('#addColor').hide()
+    }
+    closeTexturemodal() {
+      $('#patterns').hide()
+    }
+
+    async getMaterial() {
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "getMaterial",
+        null
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closemodal();
+    }
+
+    async addMaterial() {
+      var obj: any = {};
+      var metarials = [];
+      metarials = [{
+        name: this.name,
+        colors: this.colorCode,
+        interactionValue: this.interactionValue,
+        roughness: this.roughness,
+        image: this.image,
+        metal: this.isMetal,
+        visible: this.visible
+      }]
+
+      obj.metarials = metarials;
+      obj.type = this.type;
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "addMaterial",
+        obj
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closemodal();
     }
     
+    async addColor() {
 
-    closemodal()
-    {
-        $('#my-modal').hide()
+      var obj: any = {};
+      var colors = [];
+      colors= [{
+        name: this.colorName,
+        code: this.colorCodeInColor,
+        visible: this.visibleInColor
+      }]
 
+      obj.colors = colors;
+      obj.type = this.type;
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "addMaterial",
+        obj
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closeColoremodal() ;
     }
 
-    texture()
-    {
-        $('#texture').show()
+    async addPatternse() {
 
+      var obj: any = {};
+      var patterns = [];
+      patterns = [{
+        name: this.patternName,
+        visible: this.visibleInPattern
+      }]
+
+      obj.patterns = patterns;
+      obj.type = this.type;
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "addMaterial",
+        obj
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closeTexturemodal()
     }
-    closetexturemodal()
-    {
-        $('#texture').hide()
-
-    }
-   
-
-    
+ 
 }

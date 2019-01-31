@@ -38,7 +38,10 @@ export class APIService {
         return this.getUrl("api/crud");
     }
     getSharedUrl() {
-        return this.getUrl("api/crud/GET");
+        return this.getUrl("api/manager");
+    }
+    getPostUrl() {
+      return this.getUrl("api/crud/ADD");
     }
 
     getHeaders() {
@@ -74,7 +77,14 @@ export class APIService {
     }
 
 
+    //async execute1(inputData: any, showload: boolean = true) {
+    //  const apiresponse = await this.http
+    //    .post(this.getSharedUrl(), inputData)
+    //    .toPromise();
 
+    //  if (apiresponse) return { isapisuccess: true, apidata: apiresponse.json() };
+    //  else return { isapisuccess: false, apidata: null };
+    //}
 
 
 
@@ -97,6 +107,7 @@ export class APIService {
                 );
         });
     }
+
 
     async  executeByURL(url: any, inputData: any) {
         var final_url = this.getAPIBaseURL() + url;

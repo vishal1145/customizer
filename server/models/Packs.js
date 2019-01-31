@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 
-var PacksSchema = new mongoose.Schema({
+var Packs = new Schema({
     name : String,
     type:{
         type: String,
@@ -11,11 +12,17 @@ var PacksSchema = new mongoose.Schema({
         name: String,
         texture:String,
         order: Number,
-        visible : { type: Boolean, default: false }
+        visible : { type: Boolean, default: false },
+        interactionValue : String,
+        roughness : Number,
+        metal : { type: Boolean, default: false },
+        colors : String,
+        image : String
     }],
     colors: [{ 
         code: String,
         order: Number,
+        name : String,
         visible : { type: Boolean, default: false }
     }],
     patterns: [{ 
@@ -26,8 +33,8 @@ var PacksSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
     order: Number,
-    visible : { type: Boolean, default: false }
+    visible : { type: Boolean, default: false },
 });
 
-mongoose.model('Pack', PacksSchema);
+module.exports  = mongoose.model('Packs', Packs);
 

@@ -11,6 +11,7 @@ import { AppearanceControlsComponent } from './appearance-controls/appearance-co
 import { ShareModalComponent } from './share-modal/share-modal.component';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { CookieService } from 'ngx-cookie-service';
+import { FormsModule } from '@angular/forms'
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { CookieService } from 'ngx-cookie-service';
     LoginModalComponent
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     HttpClientModule,
     ModalModule.forRoot(),

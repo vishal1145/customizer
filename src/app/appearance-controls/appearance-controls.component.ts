@@ -11,6 +11,7 @@ import {
 import {ViewerService} from '../viewer.service';
 import {Subscription} from 'rxjs';
 import {UndoMgr} from './undo-manager';
+declare var $: any;
 
 export interface DeepActiveAppearanceTracking {
     activeSection: AppearanceSection;
@@ -26,7 +27,7 @@ export interface DeepActiveAppearanceTracking {
 export class AppearanceControlsComponent implements OnDestroy {
     @ViewChild('optionsContainer')
     public optionsContainer;
-
+    
     public allSections: AppearanceSection[] = [];
     public chosenWeapon: WeaponCustomization;
     public customizationData: WeaponCustomizationData;
@@ -45,7 +46,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.initializeSubscription = viewerService.initialized.subscribe(() => {
             this.viewerInitialized();
         });
-
+        
         this.clickSubscription = this.viewerService.meshClicked.subscribe((meshName: string) => {
             this.meshClicked(meshName);
         });
@@ -386,5 +387,17 @@ export class AppearanceControlsComponent implements OnDestroy {
                 }
             });
         }
+    }
+
+    openModel()
+    {
+        $('#my-modal').show()
+
+    }
+
+    closemodal()
+    {
+        $('#my-modal').hide()
+
     }
 }

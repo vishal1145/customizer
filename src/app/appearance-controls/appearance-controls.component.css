@@ -1,0 +1,199 @@
+.gun-selector a *,
+.weapon-option a *,
+.pack-selector a *,
+.option-editor a *{
+    vertical-align: middle;
+}
+
+.gun-selector a {
+    margin: auto 0;
+}
+
+.gun-selector .material-icons {
+    font-size: 2em;
+}
+
+.weapon-icon {
+    display: inline-block;
+    width: 8em;
+    overflow: hidden;
+}
+
+.weapon-name {
+    display: inline-block;
+    width: 8em;
+}
+
+.section-selector {
+    background-color: #DADADA;
+    position: relative;
+}
+
+.vertical-divider {
+    display: inline-block;
+    height: auto;
+    margin: 1em 0;
+    border: 1px solid;
+}
+
+.section-icon {
+    height: 2em;
+    min-width: 2em;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.all-options {
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    transition: left 0.4s ease-in-out;
+}
+
+.all-options.put-away {
+    left: -100%;
+}
+
+.options-container {
+    white-space: nowrap;
+    overflow: hidden;
+    scroll-behavior: smooth;
+}
+
+.section-option {
+    display: inline-block;
+    text-align: center;
+    height: 4em;
+}
+
+.section-option .display {
+    background-clip: border-box;
+    background-origin: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 4em;
+    height: 100%;
+}
+
+.section-option .display:hover,
+.section-option.active .display {
+    border: 2px solid #EC121F;
+}
+
+.section-option.first-of-set:not(:first-child) {
+    margin-left: 15px;
+}
+
+.undo-button {
+    position: absolute;
+    color: white;
+    top: 25%;
+    left: 40%;
+    font-weight: bold;
+}
+
+.arrow-controls {
+    font-size: 2.5em;
+    line-height: 0;
+}
+
+.arrow-controls .disabled {
+    color: darkgray;
+}
+.mcontainer{
+  position:relative;
+}
+
+.deployBtn, .deployBtn2{
+  position:absolute;
+  right:20px;
+  top:-45px;
+  border-radius: 15px;
+  border: none;
+}
+
+.weapon-visiblity{
+  padding:5px;
+  font-size:1.2em;
+}
+
+.pack-selector{
+  background: #444;
+  position:relative;
+}
+
+.pack-selector ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.pack-selector li {
+  float: left;
+}
+
+.pack-selector li a {
+  display: block;
+  text-align: center;
+  padding: 2px 16px;
+  text-decoration: none;
+}
+
+.pack-selector a{
+  color:#e0e0e0;
+}
+
+.pack-selector li a:hover , .pack-selector li.active a,.pack-selector .addPack:hover{
+  background-color: #222;
+  color:#fff;
+}
+
+.pack-selector .addPack{
+  position:absolute;
+  right:15px;
+  top:0;
+  cursor: pointer;
+  padding:2px;
+  vertical-align: middle;
+  color: #e0e0e0;
+}
+
+.pack-selector .newPack i,.pack-selector .newPack a{
+  color: #ff0;
+}
+
+.pack-selector .delNewPack{
+
+}
+.pack-selector .delNewPack:hover{
+  color:#e00000;
+}
+.arrow-controls{
+
+}
+.arrow-controls .addOption{
+  font-size:1.5em;
+  color:#222;
+}
+.options-container .newOption{
+  border: 2px solid #f00;
+  box-shadow:0 0 3px #A00;
+}
+.option-editor{
+  height: 30px;
+  padding: 0 50px 0 80px;
+  margin:0;
+ }
+.option-editor .editor-option{
+  padding: 2px;
+  margin: 0 3px;
+}
+.option-editor .editor-option:hover i{
+  color: red;
+}
+.optionDisplayImg{
+  width:100%;
+  height:100%;
+}

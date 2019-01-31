@@ -1,0 +1,43 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #F1F2ED;
+  color: #222222;
+  overflow: hidden;
+}
+
+app-root {
+  height: 100vh;
+}
+
+app-babylon-viewer {
+  line-height: 0;
+  overflow: hidden;
+}
+
+.md-inherit {
+  font-size: inherit;
+}
+
+a {
+  color: inherit;
+
+  & .st0 {
+    fill: #222222;
+  }
+
+  &:hover,
+  &.active {
+    color: #EC121F;
+    text-decoration: none;
+
+    & .st0 {
+      fill: #EC121F;
+    }
+  }
+}
+
+.contain-svg svg {
+  max-height: 100%;
+  max-width: 100%;
+}

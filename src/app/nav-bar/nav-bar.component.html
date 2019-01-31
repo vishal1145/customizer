@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand">
+  <a class="navbar-brand mr-auto" href="#"><img src="assets/img/logo.png"></a>
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a href="#"><i class="material-icons md-inherit icon">shopping_cart</i><span>PEWPEW SHOP</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#" (click)="resetMaterials($event)"><i class="material-icons md-inherit icon">refresh</i><span>START OVER</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#" (click)="startSharing($event)"><i class="material-icons md-inherit icon">launch</i><span>SHARE</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#" (click)="openFavoriteModal($event)"><i class="material-icons md-inherit icon">favorite_border</i><span>FAVORITE</span></a>
+    </li>
+    <li class="nav-item large" *ngIf="!loggedUser">
+      <a href="#" (click)="openLoginModal($event)"><i class="material-icons md-inherit icon">account_circle</i><span>MY ACCOUNT</span></a>
+    </li>
+    <li class="nav-item large" *ngIf="loggedUser">
+      <a href="#" (click)="logout($event)"><i class="material-icons md-inherit icon">account_circle</i><span>Logout</span></a>
+    </li>
+  </ul>
+</nav>

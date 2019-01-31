@@ -97,7 +97,7 @@
     <div class="mt-3 mb-3 col-auto arrow-controls d-flex">
         <a 
         class="m-auto" 
-        (click)="openModel()">
+        (click)="texture()">
        <i class="material-icons md-inherit addOption">add</i>
      </a>
       <a class="m-auto" href="#"
@@ -178,6 +178,103 @@
                 <div _ngcontent-c6="" class="col-12 form-group">
                    <button _ngcontent-c6="" class="btn btn-primary">Add New Material</button>
                 </div>
+             </div>
+          </div>
+          <!-- <div class="modal-footer">
+             <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div> -->
+       </div>
+    </div>
+ </div>
+
+
+
+
+
+ <div class="modal" style=" overflow-y: scroll;" id="addColor" role="dialog">
+    <div class="modal-dialog">
+       <!-- Modal content-->
+       <div class="modal-content">
+          <div class="modal-header">
+             <h4 >Add New Color</h4>
+             <button (click)="closeaddColormodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+             <div _ngcontent-c6="" class="row">
+                <div _ngcontent-c6="" class="col-12">
+                   <p > Please fill in the fields to add new Color. </p>
+                </div>
+                <div  class="col-12 form-group">
+                   <label _ngcontent-c6="">name</label>
+                   <input _ngcontent-c6="" placeholder="new color" class="form-control ng-untouched ng-pristine ng-valid" type="text" >
+                </div>
+                <div class="col-12 form-group">
+                   <label >display color</label>
+                   <input placeholder="#000000"  class="form-control ng-untouched ng-pristine ng-valid" type="text" ng-reflect-model="#000000">
+                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+                </div>
+                <div class="col-12 form-group">
+                   <label >interactionValue</label>
+                   <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
+                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+                </div>
+               
+                
+               
+                <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
+                   <div _ngcontent-c6="" class="checkbox">
+                      <label _ngcontent-c6=""><input _ngcontent-c6="" type="checkbox"> Visible</label>
+                   </div>
+                </div>
+              <div _ngcontent-c6="" class="col-12 form-group">
+                   <button _ngcontent-c6="" class="btn btn-primary">Add New Color</button>
+                </div> 
+             </div>
+          </div>
+          <!-- <div class="modal-footer">
+             <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div> -->
+       </div>
+    </div>
+ </div>
+
+
+
+ <div class="modal" style=" overflow-y: scroll;" id="texture" role="dialog">
+    <div class="modal-dialog">
+       <!-- Modal content-->
+       <div class="modal-content">
+          <div class="modal-header">
+             <h4 >Add New Texture</h4>
+             <button (click)="closetexturemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+             <div _ngcontent-c6="" class="row">
+                <div _ngcontent-c6="" class="col-12">
+                   <p > Please fill in the fields to add new Texture. </p>
+                </div>
+                <div  class="col-12 form-group">
+                   <label _ngcontent-c6="">name</label>
+                   <input _ngcontent-c6="" placeholder="new color" class="form-control ng-untouched ng-pristine ng-valid" type="text" >
+                </div>
+              
+                <div style="position: relative;" class="col-12 imgHolder text-center mt-3">
+                    <input style="position: absolute;opacity: 0; line-height: 121px;width: 128px;" accept="image/*" type="file">
+                    <img width="128" class="imageSample" src="http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png">
+                 </div>
+
+                <div class="col-12 form-group">
+                   <label >interactionValue</label>
+                   <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
+                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+                </div>
+               
+                
+               
+              
+              <div _ngcontent-c6="" class="col-12 form-group">
+                   <button _ngcontent-c6="" class="btn btn-primary">Add New Texture</button>
+                </div> 
              </div>
           </div>
           <!-- <div class="modal-footer">

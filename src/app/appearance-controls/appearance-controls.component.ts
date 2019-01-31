@@ -395,9 +395,35 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     }
 
+    addColor()
+    {
+        $('#addColor').show()
+
+    }
+    closeaddColormodal()
+    {
+        $('#addColor').hide()
+
+    }
+    
+
     closemodal()
     {
         $('#my-modal').hide()
 
     }
+
+    texture()
+    {
+        $('#texture').show()
+
+    }
+    closetexturemodal()
+    {
+        $('#texture').hide()
+
+    }
+   
+
+    
 }

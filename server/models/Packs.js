@@ -28,7 +28,8 @@ var Packs = new Schema({
     patterns: [{ 
         name: String,
         order: Number,
-        visible : { type: Boolean, default: false }
+        visible : { type: Boolean, default: false },
+        image : String
     }] ,
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },

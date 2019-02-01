@@ -73,6 +73,12 @@ export class AppearanceControlsComponent implements OnDestroy {
     colorName: any;
     visibleInPattern: boolean = false;
     patternName: any;
+    isEdit: boolean = true;
+    packName: any
+    packtype: any = "MATERIALS"
+    packid: any;
+    arrid: any;
+    patternImage: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
 
     undoManagerLimit() {
         return UndoMgr.getInstance().getIndex() + 1;
@@ -416,16 +422,33 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     openModel()
     {
+      this.isEdit = false
       if (this.type == "MATERIALS")
       {
+        this.name = ''
+        this.colorCode = '#ffff'
+        this.interactionValue = "new material"
+        this.roughness = 0.5
+        this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
+        this.isMetal = false
+        this.visible = false
         $('#my-modal').show()
       }
       else if (this.type == "COLORS")
       {
+
+        this.colorName = '';
+        this.colorCodeInColor = '';
+        this.visibleInColor = false;
+
         $('#addColor').show()
       }
       else if (this.type == "PATTERNS")
       {
+
+        this.patternName = '';
+        this.visibleInPattern = false
+
         $('#patterns').show()
       }
     }
@@ -442,6 +465,31 @@ export class AppearanceControlsComponent implements OnDestroy {
       $('#patterns').hide()
     }
 
+    openAddPackModel() {
+      this.isEdit = false
+      $('#addPack').show()
+    }
+
+    closePackmodal() {
+      $('#addPack').hide()
+    }
+
+    async addPack() {
+      var obj: any = {
+        name: this.packName,
+        type: this.packtype
+      }
+
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "addPack",
+        obj
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closePackmodal();
+    }
+
     async getMaterial() {
       const input = await this.apiService.prepareNodeJSRequestObject(
         "packs",
@@ -456,6 +504,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     async addMaterial() {
       var obj: any = {};
       var metarials = [];
+      obj.packid = "5c53f4668a85172db857edb7";
       metarials = [{
         name: this.name,
         colors: this.colorCode,
@@ -467,10 +516,9 @@ export class AppearanceControlsComponent implements OnDestroy {
       }]
 
       obj.metarials = metarials;
-      obj.type = this.type;
       const input = await this.apiService.prepareNodeJSRequestObject(
         "packs",
-        "addMaterial",
+        "addDataOnPacks",
         obj
       )
       var res = await this.apiService.execute(input, false)
@@ -482,6 +530,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
       var obj: any = {};
       var colors = [];
+      obj.packid = "5c5427bec89aee31bc23b52d"
       colors= [{
         name: this.colorName,
         code: this.colorCodeInColor,
@@ -489,10 +538,9 @@ export class AppearanceControlsComponent implements OnDestroy {
       }]
 
       obj.colors = colors;
-      obj.type = this.type;
       const input = await this.apiService.prepareNodeJSRequestObject(
         "packs",
-        "addMaterial",
+        "addDataOnPacks",
         obj
       )
       var res = await this.apiService.execute(input, false)
@@ -504,21 +552,178 @@ export class AppearanceControlsComponent implements OnDestroy {
 
       var obj: any = {};
       var patterns = [];
+      obj.packid = "5c53f8e98a85172db857edbb"
       patterns = [{
         name: this.patternName,
-        visible: this.visibleInPattern
+        visible: this.visibleInPattern,
+        image : this.patternImage
       }]
 
       obj.patterns = patterns;
-      obj.type = this.type;
       const input = await this.apiService.prepareNodeJSRequestObject(
         "packs",
-        "addMaterial",
+        "addDataOnPacks",
         obj
       )
       var res = await this.apiService.execute(input, false)
       console.log(res)
       this.closeTexturemodal()
     }
+
+    async editOption(data, obj) {
+      this.isEdit = true
+      this.packid = "5c53f4668a85172db857edb7";
+      var type = "MATERIALS"
+      //var packid = "5c53f4668a85172db857edb7";
+      obj = {
+                visible: false,
+               metal: false,
+               _id: "5c5403993e0b6e0af8590d12",
+                name: "Test 2345",
+                colors: "#ffff",
+                interactionValue: "new material",
+                roughness: 0.5,
+                image: "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
+              }
+        this.arrid = obj._id    
+      
+        if (type == "MATERIALS") {
+        
+        this.name = obj.name
+        this.colorCode = obj.colors
+        this.interactionValue = obj.interactionValue
+        this.roughness = obj.roughness
+        this.image = obj.image
+        this.isMetal = obj.metal
+        this.visible = obj.visible
+        $('#my-modal').show()
+      }
+
+      else if (data.type == "COLORS") {
+
+        this.colorName = obj.name;
+        this.colorCodeInColor = obj.code;
+        this.visibleInColor = obj.visible;
+
+        $('#addColor').show()
+      }
+
+      else if (data.type == "PATTERNS") {
+
+        this.patternName = obj.name;
+        this.visibleInPattern = obj.visible
+
+        $('#patterns').show()
+      }
+    }
+
+    async editMaterial() {
+        var metarials: any = [
+          {
+            name: this.name,
+            colors: this.colorCode,
+            interactionValue: this.interactionValue,
+            roughness: this.roughness,
+            image: this.image,
+            metal: this.isMetal,
+            visible: this.visible
+          }
+      ]
+
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "editDataOnPacks",
+        { packid: this.packid, metarials: metarials, arrId: this.arrid}
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closemodal();
+    }
+
+    async editColor() {
+     var colors: any = [{
+        name: this.colorName,
+        code: this.colorCodeInColor,
+        visible: this.visibleInColor
+      }]
+      
+
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "editDataOnPacks",
+        { packid: this.packid, colors: colors, arrId: this.arrid }
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closemodal();
+    }
+
+    async editPatternse() {
+      var patterns: any = [{
+        name: this.patternName,
+        visible: this.visibleInPattern
+      }]
+      
+
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "editDataOnPacks",
+        { packid: this.packid, patterns: patterns, arrId: this.arrid }
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closemodal();
+    }
+
+    openDeleteModel(packid, arrid) {
+      this.packid = "5c53f4668a85172db857edb7"
+      this.arrid = "5c5403993e0b6e0af8590d12"
+      $('#deletModel').show()
+    }
+
+    closeDeleteModel() {
+      $('#deletModel').hide()
+    }
+
+    async deleteData() {
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "deleteMaterial",
+        { packid: this.packid, type: this.type, arrId: this.arrid }
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+      this.closeDeleteModel();
+    }
+
+    async setVisible(packid, arrid, value) {
+
+      packid = "5c53f4668a85172db857edb7"
+      arrid = "5c541b4d28c530339cc5ef02"
+      value = false
+
+        const input = await this.apiService.prepareNodeJSRequestObject(
+          "packs",
+          "setVisible",
+          { packid: packid, type: this.type, arrId: arrid, visible: value }
+        )
+        var res = await this.apiService.execute(input, false)
+        console.log(res)
+    }
+
+
+    async loadData() {
+      var role = "addmin";
+      const input = await this.apiService.prepareNodeJSRequestObject(
+        "packs",
+        "getdata",
+        { role : role }
+      )
+      var res = await this.apiService.execute(input, false)
+      console.log(res)
+    }
+
+
+
  
 }

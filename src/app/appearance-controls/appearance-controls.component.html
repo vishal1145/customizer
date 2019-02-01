@@ -3,7 +3,7 @@
     <div class="col-auto gun-selector d-flex">
       <a href="#" (click)="toggleChoices($event)">
         <i class="material-icons">{{hideWeaponChoices ? 'expand_less' : 'expand_more'}}</i>
-         <div class="weapon-icon contain-svg" [inlineSVG]="chosenWeapon.svgPath"></div> 
+        <div class="weapon-icon contain-svg" [inlineSVG]="chosenWeapon.svgPath"></div>
         <div class="p-2 weapon-name">{{chosenWeapon.name}}</div>
       </a>
     </div>
@@ -41,27 +41,28 @@
       </li>
 
       <li *ngFor="let pack of newPackArray" [class.newPack]="true">
-        <a (click)="newPackClicked($event)" >{{pack.name}}
+        <a (click)="newPackClicked($event)">
+          {{pack.name}}
           <i class="material-icons md-inherit delNewPack" (click)="delNewPack(pack)">close</i>
         </a>
       </li>
 
     </ul>
-    <div class="addPack" (click)="prepareAddPack()">
+    <div class="addPack" (click)="openAddPackModel()">
       <i class="material-icons md-inherit">add</i>
     </div>
   </div>
-  
+
   <div class="row option-editor">
     <div class="option-editor-options">
-      <a (click)="toggleOptionVisibility($event)" class="editor-option toggleOptionVisibility" >
-        <i *ngIf="selectedOption.visible" class="material-icons md-inherit">visibility</i>
-        <i *ngIf="!selectedOption.visible" class="material-icons md-inherit">visibility_off</i>
+      <a  class="editor-option toggleOptionVisibility">
+        <i *ngIf="selectedOption.visible" (click)="setVisible($event)" class="material-icons md-inherit">visibility</i>
+        <i *ngIf="!selectedOption.visible" (click)="setVisible($event)" class="material-icons md-inherit">visibility_off</i>
       </a>
-      <a (click)="editOption($event)" class="editor-option editOption" >
+      <a (click)="editOption($event)" class="editor-option editOption">
         <i class="material-icons md-inherit">edit</i>
       </a>
-      <a (click)="deleteOption($event)" class="editor-option delOption" >
+      <a (click)="openDeleteModel(packid, arrid)" class="editor-option delOption">
         <i class="material-icons md-inherit">close</i>
       </a>
     </div>
@@ -77,29 +78,28 @@
           <span class="undo-button">{{ undoManagerLimit() }}</span>
         </div>
       </a>
-     <!-- <a class="section-option" href="#" title="redo"
-         (click)="redoPressed($event)">
-        <div class="display" style="background-image: url('assets/img/nav-icons/arrow.png');"></div>
-      </a> -->
+      <!-- <a class="section-option" href="#" title="redo"
+          (click)="redoPressed($event)">
+         <div class="display" style="background-image: url('assets/img/nav-icons/arrow.png');"></div>
+       </a> -->
     </div>
     <div #optionsContainer class="mt-3 mb-3 col options-container">
       <ng-container *ngFor="let optionGroup of activeSection().optionGroups">
-          <a class="section-option" href="#"
-             *ngFor="let option of optionGroup.options; let isFirst = first"
-             [class.first-of-set]="isFirst"
-             [class.active]=" (option === selectedOption(optionGroup))"
-             (click)="optionClicked($event, optionGroup, option)">
-            <div class="display" [style.backgroundColor]="option.displayColor || ''"
-                 [style.backgroundImage]="option.displayImg ? ('url(\'' + option.displayImg + '\')') : ''"></div>
-          </a>
+        <a class="section-option" href="#"
+           *ngFor="let option of optionGroup.options; let isFirst = first"
+           [class.first-of-set]="isFirst"
+           [class.active]=" (option === selectedOption(optionGroup))"
+           (click)="optionClicked($event, optionGroup, option)">
+          <div class="display" [style.backgroundColor]="option.displayColor || ''"
+               [style.backgroundImage]="option.displayImg ? ('url(\'' + option.displayImg + '\')') : ''"></div>
+        </a>
       </ng-container>
     </div>
     <div class="mt-3 mb-3 col-auto arrow-controls d-flex">
-        <a 
-        class="m-auto" 
-        (click)="openModel()">
-       <i class="material-icons md-inherit addOption">add</i>
-     </a>
+      <a class="m-auto"
+         (click)="openModel()">
+        <i class="material-icons md-inherit addOption">add</i>
+      </a>
       <a class="m-auto" href="#"
          (click)="scrollOptionsLeft($event)"
          [class.disabled]="optionsContainer.scrollLeft === 0">
@@ -118,173 +118,250 @@
 
 
 <div class="modal" style=" overflow-y: scroll;" id="my-modal" role="dialog">
-    <div class="modal-dialog">
-       <!-- Modal content-->
-       <div class="modal-content">
-          <div class="modal-header">
-             <h4 >Add New Material</h4>
-             <button (click)="closemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Add New Material</h4>
+        <button (click)="closemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div _ngcontent-c6="" class="row">
+          <div _ngcontent-c6="" class="col-12">
+            <p> Please fill in the fields to add new material. </p>
           </div>
-          <div class="modal-body">
-             <div _ngcontent-c6="" class="row">
-                <div _ngcontent-c6="" class="col-12">
-                   <p > Please fill in the fields to add new material. </p>
-                </div>
-                <div  class="col-12 form-group">
-                   <label _ngcontent-c6="">name</label>
-                   <input _ngcontent-c6="" class="form-control ng-untouched ng-pristine ng-valid" [(ngModel)]="name" type="text" >
-                </div>
-                <div class="col-12 form-group">
-                   <label >color</label>
-                   <input  class="form-control ng-untouched ng-pristine ng-valid" type="text" [(ngModel)]="colorCode" ng-reflect-model="#000000">
-                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-                </div>
-                <div class="col-12 form-group">
-                   <label >interactionValue</label>
-                   <input _ngcontent-c6="" class="form-control" [(ngModel)]="interactionValue" type="text" disabled="">
-                </div>
-                <div  class="col-12 form-group">
-                   <label  for="formControlRange">roughness</label>&nbsp;&nbsp;&nbsp; 
-                   <div  class="row">
-                      <div  class="col-8"><input  class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="range" ng-reflect-model="0.32"></div>
-                      <div  class="col-4"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="number" ng-reflect-model="0.32"></div>
-                   </div>
-                </div>
-                <div  class="col-12 form-group">
-                   <div  class="row">
-                      <div  class="col-md-6 col-12">
-                         <label _ngcontent-c6="">display image</label>&nbsp; 
-                      </div>
-                      <div class="col-md-6 col-12" style="position:relative">
-                        <input accept="image/*" [(ngModel)]="image" style="position:absolute;width:115px;height:40px;opacity:0" type="file">
-                        <button class="btn btn-success" type="button">select image</button>
-                      </div>
-                      <div  class="col-12 imgHolder text-center mt-3">
-                         
-                         <img width="128" class="imageSample" src="{{image}}">
-                      </div>
-                   </div> 
-                </div>
-                <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
-                   <div _ngcontent-c6="" class="checkbox">
-                      <label _ngcontent-c6="">
-                      <input _ngcontent-c6="" type="checkbox" [(ngModel)]="isMetal">is metal</label>
-                   </div>
-                </div>
-                <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
-                   <div _ngcontent-c6="" class="checkbox">
-                      <label _ngcontent-c6=""><input _ngcontent-c6="" type="checkbox" [(ngModel)]="visible">visible</label>
-                   </div>
-                </div>
-                <div _ngcontent-c6="" class="col-12 form-group">
-                   <button _ngcontent-c6="" (click)="addMaterial()" class="btn btn-primary">Add New Material</button>
-                </div>
-             </div>
+          <div class="col-12 form-group">
+            <label _ngcontent-c6="">name</label>
+            <input _ngcontent-c6="" class="form-control ng-untouched ng-pristine ng-valid" [(ngModel)]="name" type="text">
           </div>
-          <!-- <div class="modal-footer">
-             <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div> -->
-       </div>
-    </div>
- </div>
-
-
-
-
-
- <div class="modal" style=" overflow-y: scroll;" id="addColor" role="dialog">
-    <div class="modal-dialog">
-       <!-- Modal content-->
-       <div class="modal-content">
-          <div class="modal-header">
-             <h4 >Add New Color</h4>
-             <button (click)="closeColoremodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="col-12 form-group">
+            <label>color</label>
+            <input class="form-control ng-untouched ng-pristine ng-valid" type="text" [(ngModel)]="colorCode" ng-reflect-model="#000000">
+            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
           </div>
-          <div class="modal-body">
-             <div _ngcontent-c6="" class="row">
-                <div _ngcontent-c6="" class="col-12">
-                   <p > Please fill in the fields to add new Color. </p>
-                </div>
-                <div  class="col-12 form-group">
-                   <label _ngcontent-c6="">name</label>
-                   <input _ngcontent-c6="" placeholder="new color" [(ngModel)] ="colorName" class="form-control ng-untouched ng-pristine ng-valid" type="text" >
-                </div>
-                <div class="col-12 form-group">
-                   <label >display color</label>
-                   <input placeholder="#000000" [(ngModel)] ="colorCodeInColor"   class="form-control ng-untouched ng-pristine ng-valid" type="text" ng-reflect-model="#000000">
-                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-                </div>
-                <div class="col-12 form-group">
-                   <label >interactionValue</label>
-                   <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
-                   <div class="colorSample"  style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-                </div>
-               
-                
-               
-                <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
-                   <div _ngcontent-c6="" class="checkbox">
-                      <label _ngcontent-c6=""><input _ngcontent-c6="" [(ngModel)] ="visibleInColor" type="checkbox"> Visible</label>
-                   </div>
-                </div>
-              <div _ngcontent-c6="" class="col-12 form-group">
-                   <button _ngcontent-c6="" (click)="addColor()" class="btn btn-primary">Add New Color</button>
-                </div> 
-             </div>
+          <div class="col-12 form-group">
+            <label>interactionValue</label>
+            <input _ngcontent-c6="" class="form-control" [(ngModel)]="name" type="text" disabled="">
           </div>
-          <!-- <div class="modal-footer">
-             <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div> -->
-       </div>
-    </div>
- </div>
-
-
-
- <div class="modal" style=" overflow-y: scroll;" id="patterns" role="dialog">
-    <div class="modal-dialog">
-       <!-- Modal content-->
-       <div class="modal-content">
-          <div class="modal-header">
-             <h4 >Add New Pattern</h4>
-             <button (click)="closeTexturemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="col-12 form-group">
+            <label for="formControlRange">roughness</label>&nbsp;&nbsp;&nbsp;
+            <div class="row">
+              <div class="col-8"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="range" ng-reflect-model="0.32"></div>
+              <div class="col-4"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="number" ng-reflect-model="0.32"></div>
+            </div>
           </div>
-          <div class="modal-body">
-            <div _ngcontent-c6="" class="row">
-              <div _ngcontent-c6="" class="col-12">
-                <p> Please fill in the fields to add new Texture. </p>
+          <div class="col-12 form-group">
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <label _ngcontent-c6="">display image</label>&nbsp;
               </div>
-              <div class="col-12 form-group">
-                <label _ngcontent-c6="">name</label>
-                <input _ngcontent-c6="" placeholder="new pattern" [(ngModel)]="patternName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+              <div class="col-md-6 col-12" style="position:relative">
+                <input accept="image/*" [(ngModel)]="image" style="position:absolute;width:115px;height:40px;opacity:0" type="file">
+                <button class="btn btn-success" type="button">select image</button>
               </div>
+              <div class="col-12 imgHolder text-center mt-3">
 
-              <div style="position: relative;" class="col-12 imgHolder text-center mt-3">
-                <input style="position: absolute;opacity: 0; line-height: 121px;width: 128px;" accept="image/*" type="file">
-                <img width="128" class="imageSample" src="http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png">
-              </div>
-
-              <div class="col-12 form-group">
-                <label>interactionValue</label>
-                <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
-                <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-              </div>
-              <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
-                <div _ngcontent-c6="" class="checkbox">
-                  <label _ngcontent-c6=""><input _ngcontent-c6="" [(ngModel)]="visibleInPattern" type="checkbox"> Visible</label>
-                </div>
-              </div>
-
-
-
-              <div _ngcontent-c6="" class="col-12 form-group">
-                <button _ngcontent-c6="" (click)="addPatternse()" class="btn btn-primary">Add New Texture</button>
+                <img width="128" class="imageSample" src="{{image}}">
               </div>
             </div>
           </div>
-          <!-- <div class="modal-footer">
-             <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div> -->
-       </div>
+          <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
+            <div _ngcontent-c6="" class="checkbox">
+              <label _ngcontent-c6="">
+                <input _ngcontent-c6="" type="checkbox" [(ngModel)]="isMetal">is metal
+              </label>
+            </div>
+          </div>
+          <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
+            <div _ngcontent-c6="" class="checkbox">
+              <label _ngcontent-c6=""><input _ngcontent-c6="" type="checkbox" [(ngModel)]="visible">visible</label>
+            </div>
+          </div>
+          <div _ngcontent-c6="" class="col-12 form-group">
+            <button _ngcontent-c6="" *ngIf="!isEdit" (click)="addMaterial()" class="btn btn-primary">Add New Material</button>
+            <button _ngcontent-c6="" *ngIf="isEdit" (click)="editMaterial()" class="btn btn-primary">Edit Material</button>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+         <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div> -->
     </div>
- </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal" style=" overflow-y: scroll;" id="addColor" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Add New Color</h4>
+        <button (click)="closeColoremodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div _ngcontent-c6="" class="row">
+          <div _ngcontent-c6="" class="col-12">
+            <p> Please fill in the fields to add new Color. </p>
+          </div>
+          <div class="col-12 form-group">
+            <label _ngcontent-c6="">name</label>
+            <input _ngcontent-c6="" placeholder="new color" [(ngModel)]="colorName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+          </div>
+          <div class="col-12 form-group">
+            <label>display color</label>
+            <input placeholder="#000000" [(ngModel)]="colorCodeInColor" class="form-control ng-untouched ng-pristine ng-valid" type="text" ng-reflect-model="#000000">
+            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+          </div>
+          <div class="col-12 form-group">
+            <label>interactionValue</label>
+            <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
+            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+          </div>
+
+
+
+          <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
+            <div _ngcontent-c6="" class="checkbox">
+              <label _ngcontent-c6=""><input _ngcontent-c6="" [(ngModel)]="visibleInColor" type="checkbox"> Visible</label>
+            </div>
+          </div>
+          <div _ngcontent-c6="" class="col-12 form-group">
+            <button _ngcontent-c6="" *ngIf="!isEdit" (click)="addColor()" class="btn btn-primary">Add New Color</button>
+            <button _ngcontent-c6="" *ngIf="isEdit" (click)="editColor()" class="btn btn-primary">Edit Color</button>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+         <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal" style=" overflow-y: scroll;" id="patterns" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Add New Pattern</h4>
+        <button (click)="closeTexturemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div _ngcontent-c6="" class="row">
+          <div _ngcontent-c6="" class="col-12">
+            <p> Please fill in the fields to add new Texture. </p>
+          </div>
+          <div class="col-12 form-group">
+            <label _ngcontent-c6="">name</label>
+            <input _ngcontent-c6="" placeholder="new pattern" [(ngModel)]="patternName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+          </div>
+
+          <div style="position: relative;" class="col-12 imgHolder text-center mt-3">
+            <input style="position: absolute;opacity: 0; line-height: 121px;width: 128px;" accept="image/*" type="file">
+            <img width="128" class="imageSample" src="http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png">
+          </div>
+
+          <div class="col-12 form-group">
+            <label>interactionValue</label>
+            <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
+            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+          </div>
+          <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
+            <div _ngcontent-c6="" class="checkbox">
+              <label _ngcontent-c6=""><input _ngcontent-c6="" [(ngModel)]="visibleInPattern" type="checkbox"> Visible</label>
+            </div>
+          </div>
+
+
+
+          <div _ngcontent-c6="" class="col-12 form-group">
+            <button _ngcontent-c6="" *ngIf="!isEdit" (click)="addPatternse()" class="btn btn-primary">Add New Texture</button>
+            <button _ngcontent-c6="" *ngIf="isEdit" (click)="editPatternse()" class="btn btn-primary">Edit Texture</button>
+            .
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+         <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<div class="modal" style=" overflow-y: scroll;" id="addPack" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Add New Pack</h4>
+        <button (click)="closePackmodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div _ngcontent-c6="" class="row">
+          <div _ngcontent-c6="" class="col-12">
+            <p> Please fill in the fields to add new Pack. </p>
+          </div>
+          <div class="col-12 form-group">
+            <label _ngcontent-c6="">name</label>
+            <input _ngcontent-c6="" placeholder="new pattern" [(ngModel)]="packName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+          </div>
+
+          <div class="col-12 form-group">
+            <select class="form-control ng-untouched ng-pristine ng-valid" [(ngModel)]="packtype">
+              <option value="MATERIALS">Material</option>
+              <option value="COLORS">Colors</option>
+              <option value="PATTERNS">Patterns</option>
+            </select>
+          </div>
+
+
+
+
+          <div _ngcontent-c6="" class="col-12 form-group">
+            <button _ngcontent-c6="" *ngIf="!isEdit" (click)="addPack()" class="btn btn-primary">Add New Pack</button>
+            <button _ngcontent-c6="" *ngIf="isEdit" (click)="editPack()" class="btn btn-primary">Edit Texture</button>
+
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+         <button (click)="closemodal()" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+<div class="modal " id="deletModel" role="dialog" style="background-color: rgba(0,0,0,0.4);">
+  <div class="modal-dialog modal-img ">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" style="color:black"><b>Are you sure want to delete ?</b></h5>
+        <button type="button" class="close" data-dismiss="modal" (click)="closeDeleteModel()">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-4">
+            <button type="button" style="margin-left:86%;" class="btn btn-round btn-info" (click)="deleteData()">
+              Yes
+            </button>
+          </div>
+          <div class="col-4">
+            <button type="button" style="float:right;background:#ce4747;color: white;" (click)="closemodel()" class="btn btn-round ">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

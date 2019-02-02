@@ -700,9 +700,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         $('#deletModel').show()
     }
 
-    closeDeleteModel() {
-        $('#deletModel').hide()
-    }
+   
 
     async deleteData() {
         const input = await this.apiService.prepareNodeJSRequestObject(
@@ -712,7 +710,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         )
         var res = await this.apiService.execute(input, false)
         this.onAddAndUpdate(); 
-        this.closeDeleteModel();
+        this.hideModal("deletModel");
     }
 
     async setVisible(packid, arrid, value) {

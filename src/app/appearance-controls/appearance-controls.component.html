@@ -27,11 +27,10 @@
 
   <div class="row pack-selector">
     <ul>
-      <li [class.active]="selectedPackId==='-1'">
+      <li [class.active]="selectedPackId === '-1'">
         <a href="#" (click)="selectPack(null)">ALL</a>
       </li>
-
-      <li *ngFor="let pack of packArray" [class.active]="pack==selectedPack">
+      <li *ngFor="let pack of packArray" [class.active]="pack == selectedPack">
         <ng-container>
           <a href="#" (click)="selectPack(pack)">{{pack.name}}</a>
         </ng-container>
@@ -48,21 +47,21 @@
       </li>
 
     </ul>
-    <div class="addPack" (click)="openAddPackModel()">
+    <div class="addPack" (click)="showModal('addPack')">
       <i class="material-icons md-inherit">add</i>
     </div>
   </div>
 
-  <div class="row option-editor">
+  <div class="row option-editor" *ngIf="selectedItem">
     <div class="option-editor-options">
       <a  class="editor-option toggleOptionVisibility">
         <i *ngIf="selectedOption.visible" (click)="setVisible($event)" class="material-icons md-inherit">visibility</i>
         <i *ngIf="!selectedOption.visible" (click)="setVisible($event)" class="material-icons md-inherit">visibility_off</i>
       </a>
-      <a (click)="editOption($event)" class="editor-option editOption">
+      <a (click)="editOption()" class="editor-option editOption">
         <i class="material-icons md-inherit">edit</i>
       </a>
-      <a (click)="openDeleteModel(packid, arrid)" class="editor-option delOption">
+      <a (click)="openDeleteModel()" class="editor-option delOption">
         <i class="material-icons md-inherit">close</i>
       </a>
     </div>
@@ -300,33 +299,31 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4>Add New Pack</h4>
-        <button (click)="closePackmodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+        <button (click)="hideModal('addPack')" type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <div _ngcontent-c6="" class="row">
-          <div _ngcontent-c6="" class="col-12">
+        <div  class="row">
+          <div  class="col-12">
             <p> Please fill in the fields to add new Pack. </p>
-          </div>
+          </div> 
           <div class="col-12 form-group">
-            <label _ngcontent-c6="">name</label>
-            <input _ngcontent-c6="" placeholder="new pattern" [(ngModel)]="packName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+            <input placeholder="Name of the pack" name="packname" [(ngModel)]="packName" class="form-control" type="text">
           </div>
 
-          <div class="col-12 form-group">
+          <!-- <div class="col-12 form-group">
             <select class="form-control ng-untouched ng-pristine ng-valid" [(ngModel)]="packtype">
               <option value="MATERIALS">Material</option>
               <option value="COLORS">Colors</option>
               <option value="PATTERNS">Patterns</option>
             </select>
-          </div>
+          </div> -->
 
 
 
 
-          <div _ngcontent-c6="" class="col-12 form-group">
-            <button _ngcontent-c6="" *ngIf="!isEdit" (click)="addPack()" class="btn btn-primary">Add New Pack</button>
-            <button _ngcontent-c6="" *ngIf="isEdit" (click)="editPack()" class="btn btn-primary">Edit Texture</button>
-
+          <div class="col-12 form-group">
+            <button  (click)="addPack()" class="btn btn-primary">Add New Pack</button>
+            <button  (click)="hideModal('addPack')" class="btn btn-primary">Cancle</button>
           </div>
         </div>
       </div>

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 export interface AppearanceOption {
   name: string;
@@ -66,7 +68,7 @@ export interface WeaponCustomizationData {
   providedIn: 'root'
 })
 export class CustomizerDataService {
-  constructor() { }
+  constructor(public http: HttpClient) { }
 
   generateTextureOptions(count: number, filePattern: string, descriptionPattern: string): AppearanceOption[] {
     const options: AppearanceOption[] = [];
@@ -85,7 +87,7 @@ export class CustomizerDataService {
     return options;
   }
 
-  weaponsData(): Observable<WeaponCustomizationData> {
+  weaponsData1(): Observable<WeaponCustomizationData> {
     let textureOptions = this.generateTextureOptions(12, 'BW/bw_pattern_#.jpg', 'BW Pattern #');
     textureOptions = textureOptions.concat(this.generateTextureOptions(20, 'Colorful1/colorful1_pattern_#.jpg', 'Colorful1 Pattern #'));
     textureOptions = textureOptions.concat(this.generateTextureOptions(10, 'Colorful2/colorful2_pattern_#.jpg', 'Colorful2 Pattern #'));
@@ -552,15 +554,15 @@ export class CustomizerDataService {
               oldMaterialNames: ['tactical_laser_mat']
             },
           ],
-          
-          
-          
-          
+
+
+
+
           setupActions: [
             {
               type: 'showMesh',
               target: 'magazine'
-            },            
+            },
             {
               type: 'hideMesh',
               target: 'acog'
@@ -633,29 +635,29 @@ export class CustomizerDataService {
                   allowNone: true,
                   options: [
                     {
-                      name : 'acog',
+                      name: 'acog',
                       displayImg: 'assets/img/assault-rifle/icon_acog.png',
-                      interactionValue : 'acog'
+                      interactionValue: 'acog'
                     },
                     {
-                      name : 'holographic sight',
+                      name: 'holographic sight',
                       displayImg: 'assets/img/assault-rifle/icon_holographic_sight.png',
-                      interactionValue : 'holographic_sight'
+                      interactionValue: 'holographic_sight'
                     },
                     {
-                      name : 'red_dot_sight',
+                      name: 'red_dot_sight',
                       displayImg: 'assets/img/assault-rifle/icon_red_dot_sight.png',
-                      interactionValue : 'red_dot_sight'
+                      interactionValue: 'red_dot_sight'
                     },
                     {
-                      name : 'reflect_sight',
+                      name: 'reflect_sight',
                       displayImg: 'assets/img/assault-rifle/icon_reflex_sight.png',
-                      interactionValue : 'reflect_sight'
+                      interactionValue: 'reflect_sight'
                     },
                     {
-                      name : 'scope',
+                      name: 'scope',
                       displayImg: 'assets/img/assault-rifle/icon_scope.png',
-                      interactionValue : 'scope'
+                      interactionValue: 'scope'
                     }
                   ]
                 },
@@ -663,30 +665,19 @@ export class CustomizerDataService {
                   allowNone: true,
                   options: [
                     {
-                      name : 'magazine',
+                      name: 'magazine',
                       displayImg: 'assets/img/assault-rifle/icon_magazine.png',
-                      interactionValue : 'magazine'
+                      interactionValue: 'magazine'
                     },
                     {
                       name: 'extended_magazine',
                       displayImg: 'assets/img/assault-rifle/icon_extended_magazine.png',
-                      interactionValue : 'extended_magazine'
+                      interactionValue: 'extended_magazine'
                     },
                     {
-                      name : 'double_magazine',
+                      name: 'double_magazine',
                       displayImg: 'assets/img/assault-rifle/icon_double_magazine.png',
-                      interactionValue : 'double_magazine'
-                    }
-                  ]
-                },
-    
-                {
-                  allowNone: true,
-                  options: [
-                    {
-                      name : 'flashlight',
-                      displayImg: 'assets/img/assault-rifle/icon_flashlight.png',
-                      interactionValue : 'flash_light'
+                      interactionValue: 'double_magazine'
                     }
                   ]
                 },
@@ -695,19 +686,30 @@ export class CustomizerDataService {
                   allowNone: true,
                   options: [
                     {
-                      name : 'grip01',
+                      name: 'flashlight',
+                      displayImg: 'assets/img/assault-rifle/icon_flashlight.png',
+                      interactionValue: 'flash_light'
+                    }
+                  ]
+                },
+
+                {
+                  allowNone: true,
+                  options: [
+                    {
+                      name: 'grip01',
                       displayImg: 'assets/img/assault-rifle/icon_grip01.png',
-                      interactionValue : 'grip01'
+                      interactionValue: 'grip01'
                     },
                     {
-                      name : 'grip02',
+                      name: 'grip02',
                       displayImg: 'assets/img/assault-rifle/icon_grip02.png',
-                      interactionValue : 'grip02'
+                      interactionValue: 'grip02'
                     },
                     {
-                      name : 'grip03',
+                      name: 'grip03',
                       displayImg: 'assets/img/assault-rifle/icon_grip03.png',
-                      interactionValue : 'grip03'
+                      interactionValue: 'grip03'
                     }
                   ]
                 },
@@ -715,19 +717,19 @@ export class CustomizerDataService {
                   allowNone: true,
                   options: [
                     {
-                      name : 'silencer01',
+                      name: 'silencer01',
                       displayImg: 'assets/img/assault-rifle/icon_sliencer01.png',
-                      interactionValue : 'silencer01'
+                      interactionValue: 'silencer01'
                     },
                     {
-                      name : 'silencer02',
+                      name: 'silencer02',
                       displayImg: 'assets/img/assault-rifle/icon_sliencer02.png',
-                      interactionValue : 'silencer02'
+                      interactionValue: 'silencer02'
                     },
                     {
-                      name : 'silencer03',
+                      name: 'silencer03',
                       displayImg: 'assets/img/assault-rifle/icon_sliencer03.png',
-                      interactionValue : 'silencer03'
+                      interactionValue: 'silencer03'
                     }
                   ]
                 },
@@ -737,7 +739,7 @@ export class CustomizerDataService {
                     {
                       name: 'tactical_laser',
                       displayImg: 'assets/img/assault-rifle/icon_tactical_laser.png',
-                      interactionValue : 'tactical_laser'
+                      interactionValue: 'tactical_laser'
                     }
                   ]
                 }
@@ -749,6 +751,17 @@ export class CustomizerDataService {
 
       ]
     });
+  }
+
+  weaponsData(): Observable<any> {
+    debugger;
+    const apiUrl = environment.apiBaseURL + 'api/manager';
+    var toSend = {
+      PRCID: 'packs',
+      Method: 'getdata',
+      Data: { role: 'addmin' }
+    }
+    return this.http.post<any>(apiUrl, toSend)
   }
 }
 

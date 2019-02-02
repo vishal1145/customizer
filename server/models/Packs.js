@@ -34,7 +34,7 @@ var Packs = new Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
     order: Number,
-    visible : { type: Boolean, default: false },
+    visible : { type: Boolean, default: true },
 });
 
 module.exports  = mongoose.model('Packs', Packs);

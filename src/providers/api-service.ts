@@ -41,7 +41,7 @@ export class APIService {
         return this.getUrl("api/manager");
     }
     getPostUrl() {
-      return this.getUrl("api/crud/ADD");
+        return this.getUrl("api/crud/ADD");
     }
 
     getHeaders() {
@@ -87,6 +87,9 @@ export class APIService {
     //}
 
 
+    executeSubscribe(inputData: any, showload: boolean = true) {
+        return this.http.post(this.getSharedUrl(), inputData)
+    }
 
 
     async execute(inputData: any, showload: boolean = true) {

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, ViewChild} from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import {
     AppearanceOption,
     AppearanceOptionGroup,
@@ -8,12 +8,13 @@ import {
     WeaponCustomization,
     WeaponCustomizationData
 } from '../customizer-data.service';
-import {ViewerService} from '../viewer.service';
-import {Subscription} from 'rxjs';
+import { ViewerService } from '../viewer.service';
+import { Subscription } from 'rxjs';
 import { UndoMgr } from './undo-manager';
 import { APIService } from '../../providers/api-service';
 import { FormsModule } from '@angular/forms';
 declare var $: any;
+import { FORM_DIRECTIVES } from '@angular/common';
 
 export interface DeepActiveAppearanceTracking {
     activeSection: AppearanceSection;
@@ -25,12 +26,13 @@ export interface DeepActiveAppearanceTracking {
     selector: 'app-appearance-controls',
     templateUrl: './appearance-controls.component.html',
     styleUrls: ['./appearance-controls.component.css'],
-    providers: [APIService]
+    providers: [APIService],
+    directives: [FORM_DIRECTIVES]
 })
 export class AppearanceControlsComponent implements OnDestroy {
     @ViewChild('optionsContainer')
     public optionsContainer;
-    
+
     public allSections: AppearanceSection[] = [];
     public chosenWeapon: WeaponCustomization;
     public customizationData: WeaponCustomizationData;
@@ -44,13 +46,13 @@ export class AppearanceControlsComponent implements OnDestroy {
     private lastClickedOption: Map<AppearanceSection, AppearanceOption> = new Map<AppearanceSection, AppearanceOption>();
 
 
-    packArray = [{name:'test1'},{name:'test2'}];
+    packArray = [];
     constructor(private customizerDataService: CustomizerDataService, private apiService: APIService,
-      private viewerService: ViewerService) {
+        private viewerService: ViewerService) {
         this.initializeSubscription = viewerService.initialized.subscribe(() => {
             this.viewerInitialized();
         });
-        
+
         this.clickSubscription = this.viewerService.meshClicked.subscribe((meshName: string) => {
             this.meshClicked(meshName);
         });
@@ -58,6 +60,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.viewerResetSubscription = this.viewerService.reset.subscribe(() => {
             this.viewerReset();
         });
+        this.getPacks();
     }
 
     name: any;
@@ -93,15 +96,18 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     changeSection(event: MouseEvent, section: AppearanceSection) {
-      this.activeTracking().activeSection = section;
-      console.log(section.name)
-      if (section.name == "Material") {
-        this.type = "MATERIALS"
-      } else if (section.name == "Color"){
-        this.type = "COLORS"
-      } else if (section.name == "Patterns") {
-        this.type = "PATTERNS"
-      }
+        this.activeTracking().activeSection = section;
+        console.log(section.name)
+        if (section.name == "Material") {
+            this.type = "MATERIALS"
+        } else if (section.name == "Color") {
+            this.type = "COLORS"
+        } else if (section.name == "Patterns") {
+            this.type = "PATTERNS"
+        }
+        this.packtype = this.type;
+        this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
+        this.selectedPack = null;
         return this.stopEvent(event);
     }
 
@@ -179,6 +185,9 @@ export class AppearanceControlsComponent implements OnDestroy {
      * @param {string} meshName
      */
     optionClicked(event: MouseEvent, optionGroup: AppearanceOptionGroup, option: AppearanceOption) {
+        //here we need to set the selected item;
+        //this.selectedItem = {};
+        this.selectedItem = option;
         const currentlySelectedOption = this.selectedOption(optionGroup);
         const activeTracking = this.activeTracking();
         activeTracking.resetActive = false;
@@ -351,8 +360,11 @@ export class AppearanceControlsComponent implements OnDestroy {
             this.viewerService.viewer.createMaterial(matProps);
         };
 
-        this.customizerDataService.weaponsData().subscribe((customizationData) => {
-            this.customizationData = customizationData;
+        this.customizerDataService.weaponsData().subscribe((api_response) => {
+             const customizationData = api_response.Data;
+        //this.customizerDataService.weaponsData1().subscribe((customizationData) => {
+        
+        this.customizationData = customizationData;
 
             if (!!customizationData.environment) {
                 this.viewerService.viewer.setEnvironment(customizationData.environment);
@@ -378,6 +390,42 @@ export class AppearanceControlsComponent implements OnDestroy {
         });
     }
 
+
+    viewerUpdated(api_response) {
+        const createMaterial = (matProps: MaterialProperties) => {
+            this.viewerService.viewer.createMaterial(matProps);
+        };
+
+        //this.customizerDataService.weaponsData().subscribe((api_response) => {
+        const customizationData = api_response.Data;
+        //this.customizerDataService.weaponsData1().subscribe((customizationData) => {
+        
+        this.customizationData = customizationData;
+
+            if (!!customizationData.environment) {
+                this.viewerService.viewer.setEnvironment(customizationData.environment);
+            }
+
+            if (!!customizationData.commonMaterials) {
+                customizationData.commonMaterials.forEach(createMaterial);
+            }
+
+            customizationData.weapons.forEach((weapon, wIdx) => {
+                this.setupOptionTracking(customizationData.commonSections || [], weapon);
+
+                this.viewerService.viewer.load(weapon.modelFolder, weapon.modelFile, wIdx === 0, () => {
+                    if (!!weapon.materials) {
+                        weapon.materials.forEach(createMaterial);
+                    }
+
+                    this.weaponSetup(weapon);
+                });
+            });
+
+            this.chooseWeapon(null, customizationData.weapons[0]);
+        //});
+    }
+
     viewerReset() {
         this.customizationData.weapons.forEach((weapon) => {
             this.setupOptionTracking(this.customizationData.commonSections || [], weapon);
@@ -389,7 +437,6 @@ export class AppearanceControlsComponent implements OnDestroy {
     weaponSetup(weapon: WeaponCustomization) {
         if (!!weapon.replaceMaterials) {
             weapon.replaceMaterials.forEach((replacement) => {
-                console.log('reset-part', replacement);
                 this.viewerService.viewer.replaceMaterials(weapon.modelFolder, weapon.modelFile,
                     replacement.oldMaterialNames, replacement.newMaterialName);
             });
@@ -406,12 +453,12 @@ export class AppearanceControlsComponent implements OnDestroy {
                         this.viewerService.viewer.hideMesh(setupAction.target, weapon.modelFolder, weapon.modelFile);
                         break;
                     case 'showMesh':
-                        weapon.customizations[0].optionGroups.forEach((optionGroup) =>{
+                        weapon.customizations[0].optionGroups.forEach((optionGroup) => {
                             optionGroup.options.forEach((option) => {
                                 if (setupAction.target === option.name) {
                                     this.optionOn(option);
                                     this.selectedItems.get(weapon).chosenGroupOption.set(optionGroup, option)
-                                }   
+                                }
                             });
                         });
                         break;
@@ -420,206 +467,91 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
     }
 
-    openModel()
-    {
-      this.isEdit = false
-      if (this.type == "MATERIALS")
-      {
-        this.name = ''
-        this.colorCode = '#ffff'
-        this.interactionValue = "new material"
-        this.roughness = 0.5
-        this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
-        this.isMetal = false
-        this.visible = false
-        $('#my-modal').show()
-      }
-      else if (this.type == "COLORS")
-      {
-
-        this.colorName = '';
-        this.colorCodeInColor = '';
-        this.visibleInColor = false;
-
-        $('#addColor').show()
-      }
-      else if (this.type == "PATTERNS")
-      {
-
-        this.patternName = '';
-        this.visibleInPattern = false
-
-        $('#patterns').show()
-      }
+    hideModal(id) {
+        this.manageModel(id, false);
     }
 
-
-    closemodal() {
-      $('#my-modal').hide()
-    } 
-
-    closeColoremodal() {
-      $('#addColor').hide()
-    }
-    closeTexturemodal() {
-      $('#patterns').hide()
+    showModal(id) {
+        this.manageModel(id, true);
     }
 
-    openAddPackModel() {
-      this.isEdit = false
-      $('#addPack').show()
+    manageModel(id, visible) {
+        visible ? $('#' + id).show() : $('#' + id).hide()
     }
 
-    closePackmodal() {
-      $('#addPack').hide()
+    allpacks = [];
+    async getPacks() {
+        const input = await this.apiService.prepareNodeJSRequestObject("packs", "getpacks", null)
+        const totalPacksArray: any = await this.apiService.execute(input, false)
+        this.allpacks = totalPacksArray.apidata.Data;
+        this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
+        console.log(this.packArray);
     }
+
+    selectedPack = null;
+    selectPack(pack) {
+        this.selectedPack = pack;
+        this.selectedItem = null;
+    }
+
+    // selectPack(pack) {
+    //     this.selectedPack = pack;
+    // }
 
     async addPack() {
-      var obj: any = {
-        name: this.packName,
-        type: this.packtype
-      }
-
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "addPack",
-        obj
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closePackmodal();
+        var obj: any = {
+            name: this.packName,
+            type: this.packtype
+        }
+        const input = this.apiService.prepareNodeJSRequestObject("packs", "addPack", obj)
+        await this.apiService.execute(input, false);
+        this.getPacks();
+        //this.onAddAndUpdate();
+        this.hideModal("addPack");
+        
     }
 
-    async getMaterial() {
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "getMaterial",
-        null
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closemodal();
+
+    openModel() {
+        if (this.selectedPack === null) {
+            alert("please select at pack before adding ");
+            return;
+        }
+        this.isEdit = false
+        if (this.type == "MATERIALS") {
+            this.name = ''
+            this.colorCode = ''
+            this.interactionValue = ""
+            this.roughness = 0.5
+            this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
+            this.isMetal = false
+            this.visible = false
+            this.showModal('my-modal');
+        }
+        else if (this.type == "COLORS") {
+            this.colorName = '';
+            this.colorCodeInColor = '';
+            this.visibleInColor = false;
+            this.showModal('addColor');
+        }
+        else if (this.type == "PATTERNS") {
+            this.patternName = '';
+            this.visibleInPattern = false
+            this.showModal('patterns');
+        }
+    }
+
+    onAddAndUpdate(){
+        this.customizerDataService.weaponsData().subscribe((api_response) => {
+            this.viewerUpdated(api_response);
+        });
     }
 
     async addMaterial() {
-      var obj: any = {};
-      var metarials = [];
-      obj.packid = "5c53f4668a85172db857edb7";
-      metarials = [{
-        name: this.name,
-        colors: this.colorCode,
-        interactionValue: this.interactionValue,
-        roughness: this.roughness,
-        image: this.image,
-        metal: this.isMetal,
-        visible: this.visible
-      }]
-
-      obj.metarials = metarials;
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "addDataOnPacks",
-        obj
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closemodal();
-    }
-    
-    async addColor() {
-
-      var obj: any = {};
-      var colors = [];
-      obj.packid = "5c5427bec89aee31bc23b52d"
-      colors= [{
-        name: this.colorName,
-        code: this.colorCodeInColor,
-        visible: this.visibleInColor
-      }]
-
-      obj.colors = colors;
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "addDataOnPacks",
-        obj
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closeColoremodal() ;
-    }
-
-    async addPatternse() {
-
-      var obj: any = {};
-      var patterns = [];
-      obj.packid = "5c53f8e98a85172db857edbb"
-      patterns = [{
-        name: this.patternName,
-        visible: this.visibleInPattern,
-        image : this.patternImage
-      }]
-
-      obj.patterns = patterns;
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "addDataOnPacks",
-        obj
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closeTexturemodal()
-    }
-
-    async editOption(data, obj) {
-      this.isEdit = true
-      this.packid = "5c53f4668a85172db857edb7";
-      var type = "MATERIALS"
-      //var packid = "5c53f4668a85172db857edb7";
-      obj = {
-                visible: false,
-               metal: false,
-               _id: "5c5403993e0b6e0af8590d12",
-                name: "Test 2345",
-                colors: "#ffff",
-                interactionValue: "new material",
-                roughness: 0.5,
-                image: "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
-              }
-        this.arrid = obj._id    
-      
-        if (type == "MATERIALS") {
-        
-        this.name = obj.name
-        this.colorCode = obj.colors
-        this.interactionValue = obj.interactionValue
-        this.roughness = obj.roughness
-        this.image = obj.image
-        this.isMetal = obj.metal
-        this.visible = obj.visible
-        $('#my-modal').show()
-      }
-
-      else if (data.type == "COLORS") {
-
-        this.colorName = obj.name;
-        this.colorCodeInColor = obj.code;
-        this.visibleInColor = obj.visible;
-
-        $('#addColor').show()
-      }
-
-      else if (data.type == "PATTERNS") {
-
-        this.patternName = obj.name;
-        this.visibleInPattern = obj.visible
-
-        $('#patterns').show()
-      }
-    }
-
-    async editMaterial() {
-        var metarials: any = [
-          {
+        var obj: any = {};
+        var metarials = [];
+        obj.packid = this.selectedPack._id;
+        metarials = [{
             name: this.name,
             colors: this.colorCode,
             interactionValue: this.interactionValue,
@@ -627,103 +559,169 @@ export class AppearanceControlsComponent implements OnDestroy {
             image: this.image,
             metal: this.isMetal,
             visible: this.visible
-          }
-      ]
+        }]
+        obj.metarials = metarials;
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "addDataOnPacks",
+            obj
+        )
+        await this.apiService.execute(input, false)
+        this.onAddAndUpdate();   
+        this.hideModal('my-modal');
+    }
 
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "editDataOnPacks",
-        { packid: this.packid, metarials: metarials, arrId: this.arrid}
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closemodal();
+    async addColor() {
+        var obj: any = {};
+        var colors = [];
+        obj.packid =this.selectedPack._id;
+        colors = [{
+            name: this.colorName,
+            code: this.colorCodeInColor,
+            visible: this.visibleInColor
+        }]
+
+        obj.colors = colors;
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "addDataOnPacks",
+            obj
+        )
+        await this.apiService.execute(input, false)
+        this.onAddAndUpdate();  
+        this.hideModal("addColor");
+    }
+
+    async addPatternse() {
+        var obj: any = {};
+        var patterns = [];
+        obj.packid = this.selectedPack._id;
+        patterns = [{
+            name: this.patternName,
+            visible: this.visibleInPattern,
+            image: this.patternImage
+        }]
+
+        obj.patterns = patterns;
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "addDataOnPacks",
+            obj
+        )
+        await this.apiService.execute(input, false);
+        this.onAddAndUpdate();  
+        this.hideModal('patterns')
+    }
+
+    selectedItem =null;
+    async editOption() {
+        this.isEdit = true
+        this.packid = this.selectedPack._id;
+        var type = this.packtype;
+        var obj = this.selectedItem;
+        this.arrid = obj._id
+        if (type == "MATERIALS") {
+            this.name = obj.name
+            this.colorCode = obj.colors
+            this.interactionValue = obj.interactionValue
+            this.roughness = obj.roughness
+            this.image = obj.image
+            this.isMetal = obj.metal
+            this.visible = obj.visible
+            $('#my-modal').show()
+        }
+        else if (type == "COLORS") {
+            this.colorName = obj.name;
+            this.colorCodeInColor = obj.code;
+            this.visibleInColor = obj.visible;
+            $('#addColor').show()
+        }
+        else if (type == "PATTERNS") {
+            this.patternName = obj.name;
+            this.visibleInPattern = obj.visible
+            $('#patterns').show()
+        }
+    }
+
+    async editMaterial() {
+        var metarials: any = [
+            {
+                name: this.name,
+                colors: this.colorCode,
+                interactionValue: this.interactionValue,
+                roughness: this.roughness,
+                image: this.image,
+                metal: this.isMetal,
+                visible: this.visible
+            }
+        ]
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "editDataOnPacks",
+            { packid: this.selectedPack._id, metarials: metarials, arrId: this.arrid }
+        )
+        await this.apiService.execute(input, false)
+        this.onAddAndUpdate();  
+        this.hideModal('#my-modal');
     }
 
     async editColor() {
-     var colors: any = [{
-        name: this.colorName,
-        code: this.colorCodeInColor,
-        visible: this.visibleInColor
-      }]
-      
-
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "editDataOnPacks",
-        { packid: this.packid, colors: colors, arrId: this.arrid }
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closemodal();
+        var colors: any = [{
+            name: this.colorName,
+            code: this.colorCodeInColor,
+            visible: this.visibleInColor
+        }]
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "editDataOnPacks",
+            { packid: this.selectedPack._id, colors: colors, arrId: this.arrid }
+        )
+        await this.apiService.execute(input, false)
+        this.onAddAndUpdate();  
+        this.hideModal('#my-modal');
     }
 
     async editPatternse() {
-      var patterns: any = [{
-        name: this.patternName,
-        visible: this.visibleInPattern
-      }]
-      
-
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "editDataOnPacks",
-        { packid: this.packid, patterns: patterns, arrId: this.arrid }
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closemodal();
+        var patterns: any = [{
+            name: this.patternName,
+            visible: this.visibleInPattern
+        }]
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "editDataOnPacks",
+            { packid: this.selectedPack._id, patterns: patterns, arrId: this.arrid }
+        )
+        await this.apiService.execute(input, false)
+        this.onAddAndUpdate();  
+        this.hideModal('#my-modal');
     }
 
-    openDeleteModel(packid, arrid) {
-      this.packid = "5c53f4668a85172db857edb7"
-      this.arrid = "5c5403993e0b6e0af8590d12"
-      $('#deletModel').show()
+    openDeleteModel() {
+        $('#deletModel').show()
     }
 
     closeDeleteModel() {
-      $('#deletModel').hide()
+        $('#deletModel').hide()
     }
 
     async deleteData() {
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "deleteMaterial",
-        { packid: this.packid, type: this.type, arrId: this.arrid }
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-      this.closeDeleteModel();
+        const input = await this.apiService.prepareNodeJSRequestObject(
+            "packs",
+            "deleteMaterial",
+            { packid: this.selectedPack._id, type: this.type, arrId: this.selectedItem._id }
+        )
+        var res = await this.apiService.execute(input, false)
+        this.onAddAndUpdate(); 
+        this.closeDeleteModel();
     }
 
     async setVisible(packid, arrid, value) {
-
-      packid = "5c53f4668a85172db857edb7"
-      arrid = "5c541b4d28c530339cc5ef02"
-      value = false
-
+        value = false
         const input = await this.apiService.prepareNodeJSRequestObject(
-          "packs",
-          "setVisible",
-          { packid: packid, type: this.type, arrId: arrid, visible: value }
+            "packs",
+            "setVisible",
+             { packid: this.selectedPack._id, type: this.type, arrId: this.selectedItem._id }
         )
-        var res = await this.apiService.execute(input, false)
-        console.log(res)
+        await this.apiService.execute(input, false)
     }
-
-
-    async loadData() {
-      var role = "addmin";
-      const input = await this.apiService.prepareNodeJSRequestObject(
-        "packs",
-        "getdata",
-        { role : role }
-      )
-      var res = await this.apiService.execute(input, false)
-      console.log(res)
-    }
-
-
-
- 
 }

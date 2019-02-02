@@ -1,3 +1,4 @@
+console.log("test message");
 var express = require('express');
 var fs = require('fs');
 const rateLimit = require("express-rate-limit");

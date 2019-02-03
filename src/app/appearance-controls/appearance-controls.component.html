@@ -27,7 +27,7 @@
 
   <div class="row pack-selector">
     <ul>
-      <li [class.active]="selectedPackId === '-1'">
+      <li [class.active]="allitemSelected">
         <a href="#" (click)="selectPack(null)">ALL</a>
       </li>
       <li *ngFor="let pack of packArray" [class.active]="pack == selectedPack">
@@ -84,14 +84,19 @@
     </div>
     <div #optionsContainer class="mt-3 mb-3 col options-container">
       <ng-container *ngFor="let optionGroup of activeSection().optionGroups">
+        <ng-container *ngFor="let option of optionGroup.options; let isFirst = first">
         <a class="section-option" href="#"
-           *ngFor="let option of optionGroup.options; let isFirst = first"
+           *ngIf="allitemSelected || (selectedPack && selectedPack._id === option.pack_id)"
            [class.first-of-set]="isFirst"
            [class.active]=" (option === selectedOption(optionGroup))"
            (click)="optionClicked($event, optionGroup, option)">
+           {{option.name}}
           <div class="display" [style.backgroundColor]="option.displayColor || ''"
                [style.backgroundImage]="option.displayImg ? ('url(\'' + option.displayImg + '\')') : ''"></div>
         </a>
+      </ng-container>
+        <!-- allitemSelected -->
+
       </ng-container>
     </div>
     <div class="mt-3 mb-3 col-auto arrow-controls d-flex">
@@ -122,7 +127,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4>Add New Material</h4>
-        <button (click)="closemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+        <button (click)="hideModal('my-modal')" type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <div _ngcontent-c6="" class="row">
@@ -249,7 +254,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4>Add New Pattern</h4>
-        <button (click)="closeTexturemodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+        <button (click)="hideModal('patterns')" type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <div _ngcontent-c6="" class="row">
@@ -323,7 +328,7 @@
 
           <div class="col-12 form-group">
             <button  (click)="addPack()" class="btn btn-primary">Add New Pack</button>
-            <button  (click)="hideModal('addPack')" class="btn btn-primary">Cancle</button>
+            <!-- <button  (click)="hideModal('addPack')" class="btn btn-primary">Cancle</button> -->
           </div>
         </div>
       </div>

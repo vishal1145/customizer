@@ -8,6 +8,8 @@ export interface AppearanceOption {
   displayImg?: string;
   displayColor?: string;
   interactionValue: string;
+  _id?: string,
+  pack_id?: string
 }
 
 export interface AppearanceOptionGroup {
@@ -754,7 +756,6 @@ export class CustomizerDataService {
   }
 
   weaponsData(): Observable<any> {
-    debugger;
     const apiUrl = environment.apiBaseURL + 'api/manager';
     var toSend = {
       PRCID: 'packs',

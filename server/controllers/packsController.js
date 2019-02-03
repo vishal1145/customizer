@@ -868,6 +868,8 @@ module.exports = function () {
             option.name = temp[i].metarials[j].name
             option.displayImg = temp[i].metarials[j].image
             option.interactionValue = temp[i].metarials[j].name
+            option.pack_id = temp[i]._id;
+            option._id = temp[i].metarials[j]._id;
 
             if (role == "Admin") {
               obj.commonSections[0].optionGroups[0].options.push(option)
@@ -891,6 +893,8 @@ module.exports = function () {
             option.name = temp[i].colors[j].name
             option.displayColor = temp[i].colors[j].code
             option.interactionValue = temp[i].colors[j].code
+            option.pack_id = temp[i]._id;
+            option._id = temp[i].colors[j]._id;
 
             if (role == "Admin") {
               obj.commonSections[1].optionGroups[0].options.push(option)
@@ -906,6 +910,8 @@ module.exports = function () {
             option.name = temp[i].patterns[j].name
             option.displayColor = temp[i].patterns[j].image
             option.interactionValue = temp[i].patterns[j].image
+            option.pack_id = temp[i]._id;
+            option._id = temp[i].patterns[j]._id;
 
             if (role == "Admin") {
               obj.commonSections[2].optionGroups[0].options.push(option)

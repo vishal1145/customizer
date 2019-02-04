@@ -86,28 +86,28 @@ module.exports = function () {
       } else if (data.colors && data.colors.length > 0) {
         let temp = await Packs.updateOne({
           _id: packid,
-          metarials: {
+          colors: {
             $elemMatch: {
               _id: arrid
             }
           }
         }, {
           $set: {
-            "colors.$": data.metarials[0]
+            "colors.$": data.colors[0]
           }
         });
         return temp
       } else if (data.patterns && data.patterns.length > 0) {
         let temp = await Packs.updateOne({
           _id: packid,
-          metarials: {
+          patterns: {
             $elemMatch: {
               _id: arrid
             }
           }
         }, {
           $set: {
-            "patterns.$": data.metarials[0]
+            "patterns.$": data.patterns[0]
           }
         });
         return temp
@@ -908,8 +908,8 @@ module.exports = function () {
             let option = {}
 
             option.name = temp[i].patterns[j].name
-            option.displayColor = temp[i].patterns[j].image
-            option.interactionValue = temp[i].patterns[j].image
+            option.displayImg = temp[i].patterns[j].image
+            option.interactionValue = temp[i].patterns[j].name
             option.pack_id = temp[i]._id;
             option._id = temp[i].patterns[j]._id;
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, NgZone} from '@angular/core';
 import {
     AppearanceOption,
     AppearanceOptionGroup,
@@ -15,7 +15,7 @@ import { APIService } from '../../providers/api-service';
 import { FormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 declare var $: any;
-//import { FORM_DIRECTIVES } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface DeepActiveAppearanceTracking {
     activeSection: AppearanceSection;
@@ -49,7 +49,8 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     packArray = [];
     newPackArray = [];
-    constructor(private customizerDataService: CustomizerDataService, private apiService: APIService,
+    constructor(private customizerDataService: CustomizerDataService,
+      private apiService: APIService, private _ngZone: NgZone,
         private viewerService: ViewerService) {
         this.initializeSubscription = viewerService.initialized.subscribe(() => {
             this.viewerInitialized();
@@ -83,7 +84,8 @@ export class AppearanceControlsComponent implements OnDestroy {
     packtype: any = "MATERIALS"
     packid: any;
     arrid: any;
-    color:any = "#000"
+    color: any = "#000"
+    imagePath: any;
     patternImage: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
 
     undoManagerLimit() {
@@ -498,13 +500,15 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     selectedPack = null;
     selectPack(pack) {
+      this._ngZone.run(() => {
         if (pack) {
-            this.selectedPack = pack;
-            this.selectedItem = null;
-            this.allitemSelected = false;
+          this.selectedPack = pack;
+          this.selectedItem = null;
+          this.allitemSelected = false;
         } else {
-            this.allitemSelected = true;
+          this.allitemSelected = true;
         }
+      });
     }
 
     // selectPack(pack) {
@@ -549,7 +553,8 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
         else if (this.type == "PATTERNS") {
             this.patternName = '';
-            this.visibleInPattern = false
+            this.visibleInPattern = false;
+            this.patternImage = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
             this.showModal('patterns');
         }
     }
@@ -565,6 +570,57 @@ export class AppearanceControlsComponent implements OnDestroy {
       this.colorCode = data
     }
 
+    async fileEvent(data) {
+
+      this.imagePath = await this.sendFile(data.target.files[0]);
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        var tfg: any = e.target;
+        $('#image')
+          .attr('src', tfg.result)
+          .width(150)
+          .height(150);
+
+        $('#image1')
+          .attr('src', tfg.result)
+          .width(150)
+          .height(150);
+      };
+
+
+
+      reader.readAsDataURL(data.target.files[0]);
+    }
+
+    sendFile(file) {
+
+          return new Promise(function (resolve, reject)  {
+      
+            const apiUrl = environment.apiBaseURL + 'profile';
+              var self = this
+              var formData = new FormData();
+              var xhr = new XMLHttpRequest();
+
+                formData.append("avatar", file, file.name);
+
+                  xhr.open("POST", apiUrl, true);
+
+                  xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                      if (xhr.status === 200) {
+                        resolve(JSON.parse(xhr.responseText).path);
+                      } else {
+                        console.error(xhr.statusText);
+                      }
+                   }
+                };
+
+                  xhr.send(formData); 
+                      })
+      }
+
+
     async addMaterial() {
         var obj: any = {};
         var metarials = [];
@@ -574,7 +630,7 @@ export class AppearanceControlsComponent implements OnDestroy {
             colors: this.colorCode,
             interactionValue: this.interactionValue,
             roughness: this.roughness,
-            image: this.image,
+            image: this.imagePath,
             metal: this.isMetal,
             visible: this.visible
         }]
@@ -621,7 +677,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         patterns = [{
             name: this.patternName,
             visible: this.visibleInPattern,
-            image: this.patternImage
+            image: this.imagePath
         }]
 
         obj.patterns = patterns;
@@ -642,12 +698,13 @@ export class AppearanceControlsComponent implements OnDestroy {
         var type = this.packtype;
         var obj = this.selectedItem;
         this.arrid = obj._id
+        this.imagePath = "";
         if (type == "MATERIALS") {
             this.name = obj.name
             this.colorCode = obj.colors
             this.interactionValue = obj.interactionValue
             this.roughness = obj.roughness
-            this.image = obj.image
+            this.image = obj.displayImg
             this.isMetal = obj.metal
             this.visible = obj.visible
             $('#my-modal').show()
@@ -661,6 +718,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         else if (type == "PATTERNS") {
             this.patternName = obj.name;
             this.visibleInPattern = obj.visible
+            this.patternImage = obj.displayImg
             $('#patterns').show()
         }
     }
@@ -676,7 +734,10 @@ export class AppearanceControlsComponent implements OnDestroy {
                 metal: this.isMetal,
                 visible: this.visible
             }
-        ]
+      ]
+        if (this.imagePath && this.imagePath != '') {
+          metarials[0].image = this.imagePath
+        }
         const input = await this.apiService.prepareNodeJSRequestObject(
             "packs",
             "editDataOnPacks",
@@ -684,7 +745,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         )
         await this.apiService.execute(input, false)
         this.onAddAndUpdate();
-        this.hideModal('#my-modal');
+        this.hideModal('my-modal');
     }
 
     async editColor() {
@@ -700,14 +761,20 @@ export class AppearanceControlsComponent implements OnDestroy {
         )
         await this.apiService.execute(input, false)
         this.onAddAndUpdate();
-        this.hideModal('#my-modal');
+        this.hideModal('addColor');
     }
 
     async editPatternse() {
         var patterns: any = [{
             name: this.patternName,
-            visible: this.visibleInPattern
-        }]
+            visible: this.visibleInPattern,
+            image: this.patternImage
+      }]
+
+        if (this.imagePath && this.imagePath != '') {
+          patterns[0].image = this.imagePath
+        }
+
         const input = await this.apiService.prepareNodeJSRequestObject(
             "packs",
             "editDataOnPacks",
@@ -715,7 +782,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         )
         await this.apiService.execute(input, false)
         this.onAddAndUpdate();
-        this.hideModal('#my-modal');
+        this.hideModal('patterns');
     }
 
     openDeleteModel() {

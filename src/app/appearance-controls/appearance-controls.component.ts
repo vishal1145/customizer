@@ -538,22 +538,24 @@ export class AppearanceControlsComponent implements OnDestroy {
         if (this.type == "MATERIALS") {
             this.name = ''
             this.colorCode = "#000"
+            this.color = "#000"
             this.interactionValue = ""
             this.roughness = 0.5
             this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
-            this.isMetal = false
-            this.visible = false
+            this.isMetal = true
+            this.visible = true
             this.showModal('my-modal');
         }
         else if (this.type == "COLORS") {
             this.colorName = '';
             this.colorCodeInColor = "#000";
-            this.visibleInColor = false;
+            this.color = "#000"
+            this.visibleInColor = true;
             this.showModal('addColor');
         }
         else if (this.type == "PATTERNS") {
             this.patternName = '';
-            this.visibleInPattern = false;
+            this.visibleInPattern = true;
             this.patternImage = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
             this.showModal('patterns');
         }
@@ -694,7 +696,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     selectedItem = null;
     async editOption() {
         this.isEdit = true
-        this.packid = this.selectedPack._id;
+        this.packid = this.selectedItem.pack_id;
         var type = this.packtype;
         var obj = this.selectedItem;
         this.arrid = obj._id
@@ -711,7 +713,8 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
         else if (type == "COLORS") {
             this.colorName = obj.name;
-            this.colorCodeInColor = obj.code;
+            this.colorCodeInColor = obj.displayColor;
+            this.color = obj.displayColor;
             this.visibleInColor = obj.visible;
             $('#addColor').show()
         }

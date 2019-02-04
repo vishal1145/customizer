@@ -5,7 +5,7 @@ module.exports = function () {
 
   this.getpacks = async function (data, options) {
     var findCondition = {};
-    if (data.role !== "admin") findCondition = {
+    if (data.role !== "addmin") findCondition = {
       visible: true
     };
     return Packs.find({});
@@ -223,7 +223,7 @@ module.exports = function () {
 
   this.getdata = async function (data, options) {
     // "Admin" then pick all the data otherwise pick which are visible 
-    var role = data.Role
+    var role = data.role
     var obj = {};
     var textureOptions = {};
     obj = {
@@ -876,7 +876,7 @@ module.exports = function () {
             option.pack_id = temp[i]._id;
             option._id = temp[i].metarials[j]._id;
 
-            if (role == "Admin") {
+            if (role == "addmin") {
               obj.commonSections[0].optionGroups[0].options.push(option)
             } else if (temp[i].metarials[j].visible) {
               obj.commonSections[0].optionGroups[0].options.push(option)
@@ -901,7 +901,7 @@ module.exports = function () {
             option.pack_id = temp[i]._id;
             option._id = temp[i].colors[j]._id;
 
-            if (role == "Admin") {
+            if (role == "addmin") {
               obj.commonSections[1].optionGroups[0].options.push(option)
             } else if (temp[i].colors[j].visible) {
               obj.commonSections[1].optionGroups[0].options.push(option)
@@ -918,7 +918,7 @@ module.exports = function () {
             option.pack_id = temp[i]._id;
             option._id = temp[i].patterns[j]._id;
 
-            if (role == "Admin") {
+            if (role == "addmin") {
               obj.commonSections[2].optionGroups[0].options.push(option)
             } else if (temp[i].patterns[j].visible) {
               obj.commonSections[2].optionGroups[0].options.push(option)

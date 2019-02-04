@@ -476,9 +476,14 @@ export class AppearanceControlsComponent implements OnDestroy {
             });
         }
     }
+    openAddPackModel() {
+      this.packName = ""
+      this.showModal('addPack')
+    }
 
     hideModal(id) {
-        this.manageModel(id, false);
+      this.manageModel(id, false);
+      this.isEdit = false
     }
 
     showModal(id) {
@@ -507,6 +512,7 @@ export class AppearanceControlsComponent implements OnDestroy {
           this.allitemSelected = false;
         } else {
           this.allitemSelected = true;
+          this.selectedPack = null
         }
       });
     }
@@ -525,6 +531,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.getPacks();
         //this.onAddAndUpdate();
         this.hideModal("addPack");
+        this.packName = ""
 
     }
 
@@ -815,4 +822,48 @@ export class AppearanceControlsComponent implements OnDestroy {
         )
         await this.apiService.execute(input, false)
     }
+
+    async setVisibleofPack(pack: any, b) {
+      var obj: any = {};
+      obj.packid = pack._id
+      obj.value = b
+      const input = this.apiService.prepareNodeJSRequestObject("packs", "setVisibleOfPack", obj)
+      await this.apiService.execute(input, false);
+      this.getPacks();
+    }
+
+     openEditPack(pack) {
+      this.isEdit = true;
+      this.packid = pack._id
+      this.packName = pack.name
+      this.showModal('addPack');
+     }
+
+     async editPack() {
+       var obj: any = {};
+       obj.packid = this.packid
+       obj.name = this.packName 
+       const input = this.apiService.prepareNodeJSRequestObject("packs", "editPack", obj)
+       await this.apiService.execute(input, false);
+       this.getPacks();
+       //this.onAddAndUpdate();
+       this.hideModal("addPack");
+       this.isEdit = false;
+     }
+
+     openDeletePack(pack) {
+       this.packid = pack._id
+       this.showModal('deletPackModel');
+     }
+
+     async deletePack() {
+       var obj: any = {};
+       obj.packid = this.packid;
+       const input = this.apiService.prepareNodeJSRequestObject("packs", "deletePack", obj)
+       await this.apiService.execute(input, false);
+       this.getPacks();
+       //this.onAddAndUpdate();
+       this.hideModal("deletPackModel");
+       this.isEdit = false;
+     }
 }

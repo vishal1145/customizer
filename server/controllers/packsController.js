@@ -931,4 +931,19 @@ module.exports = function () {
     return obj
   }
 
+  this.editPack = async function(data, option){
+    let temp = await Packs.update({"_id" :data.packid}, {$set : {"name" : data.name}}, {new : true})
+    return temp
+  }
+
+  this.deletePack = async function(data, options){
+    let temp = await Packs.remove({"_id" : data.packid});
+    return temp
+  }
+
+  this.setVisibleOfPack = async function(data, option){
+    let temp = await Packs.update({"_id" :data.packid}, {$set : {"visible" : data.value}}, {new : true})
+    return temp
+  }
+
 }

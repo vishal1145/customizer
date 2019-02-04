@@ -135,33 +135,33 @@
             <p> Please fill in the fields to add new material. </p>
           </div>
           <div class="col-12 form-group">
-            <label _ngcontent-c6="">name</label>
+            <label _ngcontent-c6="">Name</label>
             <input _ngcontent-c6="" class="form-control ng-untouched ng-pristine ng-valid" [(ngModel)]="name" type="text">
           </div>
           <div class="col-12 form-group">
-            <label>color</label>
-            <input class="form-control ng-untouched ng-pristine ng-valid" type="text" [(ngModel)]="colorCode" ng-reflect-model="#000000">
-            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+            <label>Color</label>
+            <!--<input class="form-control ng-untouched ng-pristine ng-valid" type="text" [(ngModel)]="colorCode" ng-reflect-model="#000000">-->
+              <input class="colorSample" [value]="color" style="width: 100%;" [(colorPicker)]="color" [style.background]="color" (colorPickerChange)="colorChanged($event)" />         
           </div>
-          <div class="col-12 form-group">
+          <!--<div class="col-12 form-group">
             <label>interactionValue</label>
             <input _ngcontent-c6="" class="form-control" [(ngModel)]="name" type="text" disabled="">
-          </div>
+          </div>-->
           <div class="col-12 form-group">
-            <label for="formControlRange">roughness</label>&nbsp;&nbsp;&nbsp;
+            <label for="formControlRange">Roughness</label>&nbsp;&nbsp;&nbsp;<b>{{roughness}}</b>
             <div class="row">
-              <div class="col-8"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="range" ng-reflect-model="0.32"></div>
-              <div class="col-4"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="number" ng-reflect-model="0.32"></div>
+              <div class="col-12"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="range" ng-reflect-model="0.32"></div>
+              <!--<div class="col-4"><input class="form-control-range ng-untouched ng-pristine ng-valid" id="formControlRange" max="1" min="0" step="0.01" [(ngModel)]="roughness" type="number" ng-reflect-model="0.32"></div>-->
             </div>
           </div>
           <div class="col-12 form-group">
             <div class="row">
               <div class="col-md-6 col-12">
-                <label _ngcontent-c6="">display image</label>&nbsp;
+                <label _ngcontent-c6="">Display image</label>&nbsp;
               </div>
               <div class="col-md-6 col-12" style="position:relative">
                 <input accept="image/*" [(ngModel)]="image" style="position:absolute;width:115px;height:40px;opacity:0" type="file">
-                <button class="btn btn-success" type="button">select image</button>
+                <button class="btn btn-success" type="button">Select image</button>
               </div>
               <div class="col-12 imgHolder text-center mt-3">
 
@@ -172,13 +172,13 @@
           <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
             <div _ngcontent-c6="" class="checkbox">
               <label _ngcontent-c6="">
-                <input _ngcontent-c6="" type="checkbox" [(ngModel)]="isMetal">is metal
+                <input _ngcontent-c6="" type="checkbox" [(ngModel)]="isMetal"> Is Metal
               </label>
             </div>
           </div>
           <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
             <div _ngcontent-c6="" class="checkbox">
-              <label _ngcontent-c6=""><input _ngcontent-c6="" type="checkbox" [(ngModel)]="visible">visible</label>
+              <label _ngcontent-c6=""><input _ngcontent-c6="" type="checkbox" [(ngModel)]="visible"> Visible</label>
             </div>
           </div>
           <div _ngcontent-c6="" class="col-12 form-group">
@@ -212,19 +212,21 @@
             <p> Please fill in the fields to add new Color. </p>
           </div>
           <div class="col-12 form-group">
-            <label _ngcontent-c6="">name</label>
-            <input _ngcontent-c6="" placeholder="new color" [(ngModel)]="colorName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
+            <label _ngcontent-c6="">Name</label>
+            <input _ngcontent-c6="" placeholder="New Color" [(ngModel)]="colorName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
           </div>
+
           <div class="col-12 form-group">
-            <label>display color</label>
-            <input placeholder="#000000" [(ngModel)]="colorCodeInColor" class="form-control ng-untouched ng-pristine ng-valid" type="text" ng-reflect-model="#000000">
-            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+            <label>Display color</label>
+            <!--<input class="form-control ng-untouched ng-pristine ng-valid" type="text" [(ngModel)]="colorCodeInColor" ng-reflect-model="#000000">-->
+            <input class="colorSample" [value]="color" style="width: 100%;" [(colorPicker)]="color" [style.background]="color" (colorPickerChange)="colorModelChanged($event)" />
           </div>
-          <div class="col-12 form-group">
-            <label>interactionValue</label>
-            <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
-            <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-          </div>
+
+          <!--<div class="col-12 form-group">
+    <label>interactionValue</label>
+    <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
+    <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
+  </div>-->
 
 
 
@@ -262,7 +264,7 @@
             <p> Please fill in the fields to add new Texture. </p>
           </div>
           <div class="col-12 form-group">
-            <label _ngcontent-c6="">name</label>
+            <label _ngcontent-c6="">Name</label>
             <input _ngcontent-c6="" placeholder="new pattern" [(ngModel)]="patternName" class="form-control ng-untouched ng-pristine ng-valid" type="text">
           </div>
 
@@ -271,11 +273,11 @@
             <img width="128" class="imageSample" src="http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png">
           </div>
 
-          <div class="col-12 form-group">
+          <!--<div class="col-12 form-group">
             <label>interactionValue</label>
             <input placeholder="new color" _ngcontent-c6="" class="form-control" type="text" disabled="">
             <div class="colorSample" style="background-color: rgb(0, 0, 0);">&nbsp;</div>
-          </div>
+          </div>-->
           <div _ngcontent-c6="" class="col-md-6 col-12 form-group tcenter">
             <div _ngcontent-c6="" class="checkbox">
               <label _ngcontent-c6=""><input _ngcontent-c6="" [(ngModel)]="visibleInPattern" type="checkbox"> Visible</label>

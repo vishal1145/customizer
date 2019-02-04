@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 import { UndoMgr } from './undo-manager';
 import { APIService } from '../../providers/api-service';
 import { FormsModule } from '@angular/forms';
+import { ColorPickerModule } from 'ngx-color-picker';
 declare var $: any;
 //import { FORM_DIRECTIVES } from '@angular/common';
 
@@ -65,7 +66,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     name: any;
-    colorCode: any = "#ffff";
+    colorCode: any = "#000";
     type: any = "MATERIALS";
     interactionValue: any = "new material";
     image: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
@@ -73,7 +74,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     visible: boolean = false;
     roughness: any = 0.5;
     visibleInColor: boolean = false;
-    colorCodeInColor: any;
+    colorCodeInColor: any = "#000";
     colorName: any;
     visibleInPattern: boolean = false;
     patternName: any;
@@ -82,19 +83,22 @@ export class AppearanceControlsComponent implements OnDestroy {
     packtype: any = "MATERIALS"
     packid: any;
     arrid: any;
+    color:any = "#000"
     patternImage: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
 
     undoManagerLimit() {
         return UndoMgr.getInstance().getIndex() + 1;
     }
 
+    activeTracking(): DeepActiveAppearanceTracking {
+      return this.selectedItems.get(this.chosenWeapon);
+    }
+
     activeSection(): AppearanceSection {
         return this.activeTracking().activeSection;
     }
 
-    activeTracking(): DeepActiveAppearanceTracking {
-        return this.selectedItems.get(this.chosenWeapon);
-    }
+    
 
     allitemSelected = true;
     changeSection(event: MouseEvent, section: AppearanceSection) {
@@ -529,7 +533,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.isEdit = false
         if (this.type == "MATERIALS") {
             this.name = ''
-            this.colorCode = ''
+            this.colorCode = "#000"
             this.interactionValue = ""
             this.roughness = 0.5
             this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
@@ -539,7 +543,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
         else if (this.type == "COLORS") {
             this.colorName = '';
-            this.colorCodeInColor = '';
+            this.colorCodeInColor = "#000";
             this.visibleInColor = false;
             this.showModal('addColor');
         }
@@ -554,6 +558,11 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.weaponsData().subscribe((api_response) => {
             this.viewerUpdated(api_response);
         });
+    }
+
+    colorChanged(data) {
+      console.log(data)
+      this.colorCode = data
     }
 
     async addMaterial() {
@@ -578,6 +587,10 @@ export class AppearanceControlsComponent implements OnDestroy {
         await this.apiService.execute(input, false)
         this.onAddAndUpdate();
         this.hideModal('my-modal');
+    }
+
+    colorModelChanged(data) {
+      this.colorCodeInColor = data
     }
 
     async addColor() {

@@ -12,6 +12,7 @@ import { ShareModalComponent } from './share-modal/share-modal.component';
 import { LoginModalComponent } from './login-modal/login-modal.component';
 import { CookieService } from 'ngx-cookie-service';
 import { FormsModule } from '@angular/forms'
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { FormsModule } from '@angular/forms'
     BrowserModule,
     HttpClientModule,
     ModalModule.forRoot(),
-    InlineSVGModule.forRoot()
+    InlineSVGModule.forRoot(),
+    ColorPickerModule
   ],
   providers: [CookieService],
   entryComponents: [LoginModalComponent, ShareModalComponent],

@@ -853,6 +853,11 @@ module.exports = function () {
     };
 
     let temp = await Packs.find({});
+    obj.commonSections[0].optionGroups[0].options = [];
+    obj.commonSections[1].optionGroups[0].options = [];
+    obj.commonSections[2].optionGroups[0].options = [];
+    obj.commonMaterials = [];
+
     if (temp.length > 0) {
 
       obj.commonSections[0].optionGroups[0].options = [];
@@ -921,8 +926,9 @@ module.exports = function () {
           }
         }
       }
-      return obj
+      
     }
+    return obj
   }
 
 }

@@ -1,5 +1,5 @@
 {
-    "database":"mongodb://157.230.57.197:27017/customizer",
+    "database":"mongodb://localhost:27017/customizer",
     "port":"9010",
     "security": {
         "generate" :false,

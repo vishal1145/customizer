@@ -63,7 +63,7 @@ connectToDB();
 
 
 
-const port=3000
+const port=9502;
 
 server.listen(port);
 // WARNING: app.listen(80) will NOT work here!

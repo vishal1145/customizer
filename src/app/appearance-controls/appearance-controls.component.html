@@ -22,6 +22,10 @@
         </a>
       </div>
     </div>
+
+    <div style="margin-left:550px; margin-top:17px">
+      <button style="background: #444444; border: #444444;" type="button" class="btn btn-danger">Deploy</button>
+    </div>
   </div>
 
 
@@ -36,18 +40,18 @@
             {{pack.name}}
           </a>
           <!--<a href="#">edit </a>
-  <a href="#">delete </a>
-  <a href="#">visible </a>-->
+        <a href="#">delete </a>
+        <a href="#">visible </a>-->
           <div style="display:inline-flex" *ngIf="selectedPack && selectedPack._id == pack._id" class="option-editor-options">
             <a style="padding-left: 4px;padding-right: 0px;">
-              <i style="cursor: pointer;"  *ngIf="pack.visible" (click)="setVisibleofPack(pack ,false)" class="material-icons md-inherit">visibility</i>
-              <i style="cursor: pointer;"  *ngIf="!pack.visible" (click)="setVisibleofPack(pack ,true)" class="material-icons md-inherit">visibility_off</i>
+              <i style="cursor: pointer;" *ngIf="pack.visible" (click)="setVisibleofPack(pack ,false)" class="material-icons md-inherit">visibility</i>
+              <i style="cursor: pointer;" *ngIf="!pack.visible" (click)="setVisibleofPack(pack ,true)" class="material-icons md-inherit">visibility_off</i>
             </a>
             <a style="padding-left: 4px;padding-right: 0px;" (click)="openEditPack(pack)">
               <i style="cursor: pointer;" class="material-icons md-inherit">edit</i>
             </a>
             <a style="padding-left: 4px;padding-right: 0px;" (click)="openDeletePack(pack)">
-              <i style="cursor: pointer;"  class="material-icons md-inherit">close</i>
+              <i style="cursor: pointer;" class="material-icons md-inherit">close</i>
             </a>
           </div>
         </ng-container>

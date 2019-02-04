@@ -1,10 +1,10 @@
 {
-    "database":"mongodb://testproject:testproject123@ds027509.mlab.com:27509/testproject",
+    "database":"mongodb://localhost:27017/customizer",
     "port":"9010",
     "security": {
         "generate" :false,
         "time": 81400,
         "secret":"test"
     },
-    "apipath": "http://localhost:9502/"
+    "apipath": "http://157.230.57.197:9502/"
 }

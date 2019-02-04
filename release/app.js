@@ -9,7 +9,7 @@ app.use('/dist', serveStatic(__dirname + '/dist')); // serve static files
 app.use('/wp-content', serveStatic(__dirname + '/wp-content')); // serve static files
 app.use('/wp-includes', serveStatic(__dirname + '/wp-includes'));
 
-const port = 9111;
+const port = 9501;
 
 
 app.get('*', (req, res) => res.sendfile('./index.html'))

@@ -47,6 +47,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     packArray = [];
+    newPackArray = [];
     constructor(private customizerDataService: CustomizerDataService, private apiService: APIService,
         private viewerService: ViewerService) {
         this.initializeSubscription = viewerService.initialized.subscribe(() => {

@@ -204,7 +204,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4>Add New Color</h4>
-        <button (click)="closeColoremodal()" type="button" class="close" data-dismiss="modal">&times;</button>
+        <button (click)="hideModal('addColor')" type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <div _ngcontent-c6="" class="row">
@@ -347,7 +347,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" style="color:black"><b>Are you sure want to delete ?</b></h5>
-        <button type="button" class="close" data-dismiss="modal" (click)="closeDeleteModel()">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" (click)="hideModal('deletModel')">&times;</button>
       </div>
       <div class="modal-body">
 

@@ -1464,7 +1464,7 @@ export class CustomizerDataService {
         let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == obj.arrId })
         if (j > -1) {
           if (this.dbData[i].patterns[j].opname && this.dbData[i].patterns[j].opname == "ADD") {
-            obj.colors[0].opname = "ADD"
+            obj.patterns[0].opname = "ADD"
             this.dbData[i].patterns[j] = obj.patterns[0]
           } else {
             this.dbData[i].patterns[j] = obj.patterns[0]

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { _ } from "underscore";
 
 export interface AppearanceOption {
   name: string;
@@ -9,7 +10,10 @@ export interface AppearanceOption {
   displayColor?: string;
   interactionValue: string;
   _id?: string,
-  pack_id?: string
+  pack_id?: string,
+  roughness?: string,
+  visible?: boolean,
+  metal?: boolean
 }
 
 export interface AppearanceOptionGroup {
@@ -1334,6 +1338,10 @@ export class CustomizerDataService {
             option.interactionValue = temp[i].metarials[j].name
             option.pack_id = temp[i]._id;
             option._id = temp[i].metarials[j]._id;
+            option.roughness = temp[i].metarials[j].roughness;
+            option.visible = temp[i].metarials[j].visible;
+            option.metal = temp[i].metarials[j].metal;
+            option.displayColor = temp[i].metarials[j].colors;
 
             if (isAdmin) {
               obj.commonSections[0].optionGroups[0].options.push(option)
@@ -1359,6 +1367,7 @@ export class CustomizerDataService {
             option.interactionValue = temp[i].colors[j].code
             option.pack_id = temp[i]._id;
             option._id = temp[i].colors[j]._id;
+            option.visible = temp[i].colors[j].visible;
 
             if (isAdmin) {
               obj.commonSections[1].optionGroups[0].options.push(option)
@@ -1376,6 +1385,7 @@ export class CustomizerDataService {
             option.interactionValue = temp[i].patterns[j].name
             option.pack_id = temp[i]._id;
             option._id = temp[i].patterns[j]._id;
+            option.visible = temp[i].patterns[j].visible;
 
             if (isAdmin) {
               obj.commonSections[2].optionGroups[0].options.push(option)
@@ -1390,10 +1400,158 @@ export class CustomizerDataService {
     return obj;
   }
 
-  addDataOnPacks(obj){
-    var opname = "ADD"
-    var id = "asdlkashdjasjkdbsajkds" //auto generate unique id ;
-    //push in dbData 
+  addDataOnPacks(obj) {
+    //obj.OPER
+    if (obj.metarials) {
+      obj.metarials[0]._id = new Date().getTime(); //auto generate unique id ;
+      console.log(this.dbData)
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        this.dbData[i].metarials.push(obj.metarials[0])
+      }
+    }
+    else if (obj.colors){
+      console.log(this.dbData)
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        this.dbData[i].colors.push(obj.colors[0])
+      }
+    }
+    else if (obj.patterns){
+      console.log(this.dbData)
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        this.dbData[i].patterns.push(obj.patterns[0])
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
+  }
+
+  editDataOnPacks(obj) {
+    console.log(obj)
+    
+    if (obj.metarials) {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].metarials, function (t) { return t._id == obj.arrId })
+        if (j > -1) {
+          if (this.dbData[i].metarials[j].opname && this.dbData[i].metarials[j].opname == "ADD") {
+            obj.metarials[0].opname = "ADD"
+            this.dbData[i].metarials[j] = obj.metarials[0]
+          } else {
+            this.dbData[i].metarials[j] = obj.metarials[0]
+          }
+        }
+      }
+    }
+    else if (obj.colors) {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].colors, function (t) { return t._id == obj.arrId })
+        if (j > -1) {
+          if (this.dbData[i].colors[j].opname && this.dbData[i].colors[j].opname == "ADD") {
+            obj.colors[0].opname = "ADD"
+            this.dbData[i].colors[j] = obj.colors[0]
+          } else {
+            this.dbData[i].colors[j] = obj.colors[0]
+          }
+        }
+      }
+    }
+    else if (obj.patterns) {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == obj.arrId })
+        if (j > -1) {
+          if (this.dbData[i].patterns[j].opname && this.dbData[i].patterns[j].opname == "ADD") {
+            obj.colors[0].opname = "ADD"
+            this.dbData[i].patterns[j] = obj.patterns[0]
+          } else {
+            this.dbData[i].patterns[j] = obj.patterns[0]
+          }
+        }
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
+  }
+
+  deleted = [];
+  deleteDataOnPack(data) {
+
+    this.deleted.push(data)
+
+
+    if (data.type == "MATERIALS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].metarials, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].metarials.splice(j, 1)
+        }
+      }
+    }
+    else if (data.type == "COLORS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].colors, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].colors.splice(j, 1)
+        }
+      }
+    }
+    else if (data.type == "PATTERNS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].patterns.splice(j, 1)
+        }
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
+  }
+
+  setVisibleOfPackData(data) {
+    if (data.type == "MATERIALS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].metarials, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].metarials[j].visible = data.value
+          if (this.dbData[i].metarials[j].opname && this.dbData[i].metarials[j].opname == "ADD") {
+          } else {
+            this.dbData[i].metarials[j].opname = 'EDIT'
+          }
+        }
+      }
+    }
+    else if (data.type == "COLORS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].colors, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].colors[j].visible = data.value
+          if (this.dbData[i].colors[j].opname && this.dbData[i].colors[j].opname == "ADD") {
+          } else {
+            this.dbData[i].colors[j].opname = 'EDIT'
+          }
+        }
+      }
+    }
+    else if (data.type == "PATTERNS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == data.arrId })
+        if (j > -1) {
+          this.dbData[i].patterns[j].visible = data.value
+          if (this.dbData[i].patterns[j].opname && this.dbData[i].patterns[j].opname == "ADD") {
+          } else {
+            this.dbData[i].patterns[j].opname = 'EDIT'
+          }
+        }
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
   }
 
   weaponsDataLocal() {

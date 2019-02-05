@@ -42,6 +42,7 @@
     "store": "^2.0.12",
     "tar-stream": "^1.6.2",
     "twit": "^2.2.11",
+    "underscore": "^1.9.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

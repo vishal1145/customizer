@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild, NgZone} from '@angular/core';
+import { Component, OnDestroy, ViewChild, NgZone } from '@angular/core';
 import {
     AppearanceOption,
     AppearanceOptionGroup,
@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 declare var $: any;
 import { environment } from '../../environments/environment';
+import { UserService } from '../user.service';
 
 export interface DeepActiveAppearanceTracking {
     activeSection: AppearanceSection;
@@ -49,9 +50,13 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     packArray = [];
     newPackArray = [];
+    loggedUser = null;
+    isAdmin = false;
     constructor(private customizerDataService: CustomizerDataService,
-      private apiService: APIService, private _ngZone: NgZone,
-        private viewerService: ViewerService) {
+        private apiService: APIService, private _ngZone: NgZone,
+        private viewerService: ViewerService, private userService: UserService) {
+        this.loggedUser = this.userService.retrieveUser();
+        this.isAdmin = this.userService.isAdmin();
         this.initializeSubscription = viewerService.initialized.subscribe(() => {
             this.viewerInitialized();
         });
@@ -93,14 +98,14 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     activeTracking(): DeepActiveAppearanceTracking {
-      return this.selectedItems.get(this.chosenWeapon);
+        return this.selectedItems.get(this.chosenWeapon);
     }
 
     activeSection(): AppearanceSection {
         return this.activeTracking().activeSection;
     }
 
-    
+
 
     allitemSelected = true;
     changeSection(event: MouseEvent, section: AppearanceSection) {
@@ -477,14 +482,14 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
     }
     openAddPackModel() {
-      this.packName = "";
-      this.isEdit = false;  
-      this.showModal('addPack')
+        this.packName = "";
+        this.isEdit = false;
+        this.showModal('addPack')
     }
 
     hideModal(id) {
-      this.manageModel(id, false);
-      this.isEdit = false
+        this.manageModel(id, false);
+        this.isEdit = false
     }
 
     showModal(id) {
@@ -506,16 +511,16 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     selectedPack = null;
     selectPack(pack) {
-      this._ngZone.run(() => {
-        if (pack) {
-          this.selectedPack = pack;
-          this.selectedItem = null;
-          this.allitemSelected = false;
-        } else {
-          this.allitemSelected = true;
-          this.selectedPack = null
-        }
-      });
+        this._ngZone.run(() => {
+            if (pack) {
+                this.selectedPack = pack;
+                this.selectedItem = null;
+                this.allitemSelected = false;
+            } else {
+                this.allitemSelected = true;
+                this.selectedPack = null
+            }
+        });
     }
 
     // selectPack(pack) {
@@ -538,44 +543,44 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     openModel() {
-      if (this.selectedPack === null) {
-        alert("please select at pack before adding ");
-        return;
-      }
-      this.isEdit = false
-      if (this.type == "MATERIALS") {
-        this.name = ''
-        this.colorCode = "#000"
-        this.color = "#000"
-        this.interactionValue = ""
-        this.roughness = 0.5
-        this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
-        this.isMetal = true
-        this.visible = true
-        $('#image')
-          .attr('src', 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png')
-          .width(150)
-          .height(150);
-        this.showModal('my-modal');
-      }
-      else if (this.type == "COLORS") {
-        this.colorName = '';
-        this.colorCodeInColor = "#000";
-        this.color = "#000"
-        this.visibleInColor = true;
-        this.showModal('addColor');
-      }
-      else if (this.type == "PATTERNS") {
-        this.patternName = '';
-        this.visibleInPattern = true;
-        this.patternImage = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
-        this.showModal('patterns');
+        if (this.selectedPack === null) {
+            alert("please select at pack before adding ");
+            return;
+        }
+        this.isEdit = false
+        if (this.type == "MATERIALS") {
+            this.name = ''
+            this.colorCode = "#000"
+            this.color = "#000"
+            this.interactionValue = ""
+            this.roughness = 0.5
+            this.image = 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png'
+            this.isMetal = true
+            this.visible = true
+            $('#image')
+                .attr('src', 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png')
+                .width(150)
+                .height(150);
+            this.showModal('my-modal');
+        }
+        else if (this.type == "COLORS") {
+            this.colorName = '';
+            this.colorCodeInColor = "#000";
+            this.color = "#000"
+            this.visibleInColor = true;
+            this.showModal('addColor');
+        }
+        else if (this.type == "PATTERNS") {
+            this.patternName = '';
+            this.visibleInPattern = true;
+            this.patternImage = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png"
+            this.showModal('patterns');
 
-        $('#image1')
-          .attr('src', 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png')
-          .width(150)
-          .height(150);
-      }
+            $('#image1')
+                .attr('src', 'http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png')
+                .width(150)
+                .height(150);
+        }
     }
 
     onAddAndUpdate() {
@@ -584,59 +589,59 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     colorChanged(data) {
-      console.log(data)
-      this.colorCode = data
+        console.log(data)
+        this.colorCode = data
     }
 
     async fileEvent(data) {
 
-      this.imagePath = await this.sendFile(data.target.files[0]);
-      var reader = new FileReader();
+        this.imagePath = await this.sendFile(data.target.files[0]);
+        var reader = new FileReader();
 
-      reader.onload = function (e) {
-        var tfg: any = e.target;
-        $('#image')
-          .attr('src', tfg.result)
-          .width(150)
-          .height(150);
+        reader.onload = function (e) {
+            var tfg: any = e.target;
+            $('#image')
+                .attr('src', tfg.result)
+                .width(150)
+                .height(150);
 
-        $('#image1')
-          .attr('src', tfg.result)
-          .width(150)
-          .height(150);
-      };
+            $('#image1')
+                .attr('src', tfg.result)
+                .width(150)
+                .height(150);
+        };
 
 
 
-      reader.readAsDataURL(data.target.files[0]);
+        reader.readAsDataURL(data.target.files[0]);
     }
 
     sendFile(file) {
 
-          return new Promise(function (resolve, reject)  {
-      
+        return new Promise(function (resolve, reject) {
+
             const apiUrl = environment.apiBaseURL + 'profile';
-              var self = this
-              var formData = new FormData();
-              var xhr = new XMLHttpRequest();
+            var self = this
+            var formData = new FormData();
+            var xhr = new XMLHttpRequest();
 
-                formData.append("avatar", file, file.name);
+            formData.append("avatar", file, file.name);
 
-                  xhr.open("POST", apiUrl, true);
+            xhr.open("POST", apiUrl, true);
 
-                  xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                      if (xhr.status === 200) {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
                         resolve(JSON.parse(xhr.responseText).path);
-                      } else {
+                    } else {
                         console.error(xhr.statusText);
-                      }
-                   }
-                };
+                    }
+                }
+            };
 
-                  xhr.send(formData); 
-                      })
-      }
+            xhr.send(formData);
+        })
+    }
 
 
     async addMaterial() {
@@ -667,7 +672,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     colorModelChanged(data) {
-      this.colorCodeInColor = data
+        this.colorCodeInColor = data
     }
 
     async addColor() {
@@ -764,9 +769,9 @@ export class AppearanceControlsComponent implements OnDestroy {
                 opname: "EDIT",
                 _id: this.arrid
             }
-      ]
+        ]
         if (this.imagePath && this.imagePath != '') {
-          metarials[0].image = this.imagePath
+            metarials[0].image = this.imagePath
         }
 
         var obj: any = { packid: this.selectedItem.pack_id, metarials: metarials, arrId: this.arrid };
@@ -811,10 +816,10 @@ export class AppearanceControlsComponent implements OnDestroy {
             image: this.patternImage,
             opname: "EDIT",
             _id: this.arrid
-      }]
+        }]
 
         if (this.imagePath && this.imagePath != '') {
-          patterns[0].image = this.imagePath
+            patterns[0].image = this.imagePath
         }
 
         //const input = await this.apiService.prepareNodeJSRequestObject(
@@ -845,8 +850,8 @@ export class AppearanceControlsComponent implements OnDestroy {
         //)
         //var res = await this.apiService.execute(input, false)
 
-      var obj: any = { packid: this.selectedItem.pack_id, type: this.type, arrId: this.selectedItem._id };
-      this.customizerDataService.deleteDataOnPack(obj);
+        var obj: any = { packid: this.selectedItem.pack_id, type: this.type, arrId: this.selectedItem._id };
+        this.customizerDataService.deleteDataOnPack(obj);
         this.onAddAndUpdate();
         this.hideModal("deletModel");
     }
@@ -859,60 +864,60 @@ export class AppearanceControlsComponent implements OnDestroy {
         //    { packid: this.selectedItem.pack_id, type: this.type, arrId: this.selectedItem._id }
         //)
         //await this.apiService.execute(input, false)
-      var obj: any = { packid: this.selectedItem.pack_id, type: this.type, value: value, arrId: this.selectedItem._id };
-      this.customizerDataService.setVisibleOfPackData(obj);
-      this.onAddAndUpdate();
+        var obj: any = { packid: this.selectedItem.pack_id, type: this.type, value: value, arrId: this.selectedItem._id };
+        this.customizerDataService.setVisibleOfPackData(obj);
+        this.onAddAndUpdate();
     }
 
     async setVisibleofPack(pack: any, b) {
-      var obj: any = {};
-      obj.packid = pack._id
-      obj.value = b
-      const input = this.apiService.prepareNodeJSRequestObject("packs", "setVisibleOfPack", obj)
-      await this.apiService.execute(input, false);
-      this.getPacks();
+        var obj: any = {};
+        obj.packid = pack._id
+        obj.value = b
+        const input = this.apiService.prepareNodeJSRequestObject("packs", "setVisibleOfPack", obj)
+        await this.apiService.execute(input, false);
+        this.getPacks();
     }
 
-     openEditPack(pack) {
-      this.isEdit = true;
-      this.packid = pack._id
-      this.packName = pack.name
-      this.showModal('addPack');
-     }
+    openEditPack(pack) {
+        this.isEdit = true;
+        this.packid = pack._id
+        this.packName = pack.name
+        this.showModal('addPack');
+    }
 
-     async editPack() {
-       var obj: any = {};
-       obj.packid = this.packid
-       obj.name = this.packName 
-       const input = this.apiService.prepareNodeJSRequestObject("packs", "editPack", obj)
-       await this.apiService.execute(input, false);
-       this.getPacks();
-       //this.onAddAndUpdate();
-       this.hideModal("addPack");
-       this.isEdit = false;
-     }
+    async editPack() {
+        var obj: any = {};
+        obj.packid = this.packid
+        obj.name = this.packName
+        const input = this.apiService.prepareNodeJSRequestObject("packs", "editPack", obj)
+        await this.apiService.execute(input, false);
+        this.getPacks();
+        //this.onAddAndUpdate();
+        this.hideModal("addPack");
+        this.isEdit = false;
+    }
 
-     openDeletePack(pack) {
-       this.packid = pack._id
-       this.showModal('deletPackModel');
-     }
+    openDeletePack(pack) {
+        this.packid = pack._id
+        this.showModal('deletPackModel');
+    }
 
-     async deletePack() {
-       var obj: any = {};
-       obj.packid = this.packid;
-       const input = this.apiService.prepareNodeJSRequestObject("packs", "deletePack", obj)
-       await this.apiService.execute(input, false);
-       this.getPacks();
-       //this.onAddAndUpdate();
-       this.hideModal("deletPackModel");
-       this.isEdit = false;
-     }
+    async deletePack() {
+        var obj: any = {};
+        obj.packid = this.packid;
+        const input = this.apiService.prepareNodeJSRequestObject("packs", "deletePack", obj)
+        await this.apiService.execute(input, false);
+        this.getPacks();
+        //this.onAddAndUpdate();
+        this.hideModal("deletPackModel");
+        this.isEdit = false;
+    }
 
-     async deployPackData() {
-       var obj: any = { dbData: this.customizerDataService.dbData, deleted: this.customizerDataService.deleted }
-       const input = this.apiService.prepareNodeJSRequestObject("packs", "deployPack", obj)
-       await this.apiService.execute(input, false);
-       this.onAddAndUpdate();
-       window.location.reload();
-     }
+    async deployPackData() {
+        var obj: any = { dbData: this.customizerDataService.dbData, deleted: this.customizerDataService.deleted }
+        const input = this.apiService.prepareNodeJSRequestObject("packs", "deployPack", obj)
+        await this.apiService.execute(input, false);
+        this.onAddAndUpdate();
+        window.location.reload();
+    }
 }

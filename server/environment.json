@@ -1,5 +1,6 @@
 {
-    "database":"mongodb://localhost:27017/customizer",
+    "database1":"mongodb://localhost:27017/customizer",
+    "database":"mongodb://testproject:testproject123@ds027509.mlab.com:27509/testproject",
     "port":"9010",
     "security": {
         "generate" :false,

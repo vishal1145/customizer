@@ -370,8 +370,8 @@ export class AppearanceControlsComponent implements OnDestroy {
             this.viewerService.viewer.createMaterial(matProps);
         };
 
-        this.customizerDataService.weaponsData().subscribe((api_response) => {
-            const customizationData = api_response.Data;
+        this.customizerDataService.weaponsData().then((customizationData) => {
+            //const customizationData = api_response.Data;
             //this.customizerDataService.weaponsData1().subscribe((customizationData) => {
 
             this.customizationData = customizationData;
@@ -477,7 +477,8 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
     }
     openAddPackModel() {
-      this.packName = ""
+      this.packName = "";
+      this.isEdit = false;  
       this.showModal('addPack')
     }
 
@@ -569,9 +570,8 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     onAddAndUpdate() {
-        this.customizerDataService.weaponsData().subscribe((api_response) => {
-            this.viewerUpdated(api_response);
-        });
+        const api_response = this.customizerDataService.weaponsDataLocal();
+        this.viewerUpdated(api_response);
     }
 
     colorChanged(data) {
@@ -644,12 +644,13 @@ export class AppearanceControlsComponent implements OnDestroy {
             visible: this.visible
         }]
         obj.metarials = metarials;
-        const input = await this.apiService.prepareNodeJSRequestObject(
-            "packs",
-            "addDataOnPacks",
-            obj
-        )
-        await this.apiService.execute(input, false)
+        // const input = await this.apiService.prepareNodeJSRequestObject(
+        //     "packs",
+        //     "addDataOnPacks",
+        //     obj
+        // )
+        // await this.apiService.execute(input, false)
+        this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('my-modal');
     }

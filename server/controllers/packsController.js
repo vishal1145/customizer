@@ -248,7 +248,7 @@ module.exports = function () {
     let deleted = data.deleted
     if (dbData.length > 0) {
       for (let i = 0; i < dbData.length; i++) {
-        if (dbData[i].metarials) {
+        if (dbData[i].metarials.length > 0) {
           for (let j = 0; j < dbData[i].metarials.length; j++) {
             let arr = []
             if (dbData[i].metarials[j].opname && dbData[i].metarials[j].opname == "ADD") {
@@ -279,7 +279,7 @@ module.exports = function () {
 
           }
         }
-        else if (dbData[i].colors) {
+        else if (dbData[i].colors.length > 0) {
           for (let j = 0; j < dbData[i].colors.length; j++) {
             let arr = []
             if (dbData[i].colors[j].opname && dbData[i].colors[j].opname == "ADD") {
@@ -309,7 +309,7 @@ module.exports = function () {
             }
           }
         }
-        else if (dbData[i].patterns) {
+        else if (dbData[i].patterns.length > 0) {
           for (let j = 0; j < dbData[i].patterns.length; j++) {
             let arr = []
             if (dbData[i].patterns[j].opname && dbData[i].patterns[j].opname == "ADD") {

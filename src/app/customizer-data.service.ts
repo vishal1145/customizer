@@ -13,8 +13,7 @@ export interface AppearanceOption {
   pack_id?: string,
   roughness?: string,
   visible?: boolean,
-  metal?: boolean,
-  order?: number
+  metal?: boolean
 }
 
 export interface AppearanceOptionGroup {
@@ -1334,7 +1333,6 @@ export class CustomizerDataService {
 
       for (let i = 0; i < temp.length; i++) {
         if (temp[i].metarials.length > 0) {
-          temp[i].metarials.sort('');
           for (let j = 0; j < temp[i].metarials.length; j++) {
             let option: any = {}
 
@@ -1347,7 +1345,6 @@ export class CustomizerDataService {
             option.visible = temp[i].metarials[j].visible;
             option.metal = temp[i].metarials[j].metal;
             option.displayColor = temp[i].metarials[j].colors;
-            option.order = temp[i].metarials[j].order;
 
             if (isAdmin) {
               obj.commonSections[0].optionGroups[0].options.push(option)

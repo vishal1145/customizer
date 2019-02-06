@@ -45,6 +45,16 @@
         <a href="#">delete </a>
         <a href="#">visible </a>-->
           <div style="display:inline-flex" *ngIf="selectedPack && selectedPack._id == pack._id && isAdmin" class="option-editor-options">
+            
+            <a style="padding-left: 4px;padding-right: 0px;" >
+              <i style="cursor: pointer;" class="material-icons md-inherit">keyboard_arrow_left</i>
+            </a>
+
+            <a style="padding-left: 4px;padding-right: 0px;" >
+              <i style="cursor: pointer;" class="material-icons md-inherit">keyboard_arrow_right</i>
+            </a>
+
+
             <a style="padding-left: 4px;padding-right: 0px;">
               <i style="cursor: pointer;" *ngIf="pack.visible" (click)="setVisibleofPack(pack ,false)" class="material-icons md-inherit">visibility</i>
               <i style="cursor: pointer;" *ngIf="!pack.visible" (click)="setVisibleofPack(pack ,true)" class="material-icons md-inherit">visibility_off</i>
@@ -77,14 +87,23 @@
 
   <div class="row option-editor" *ngIf="selectedItem && isAdmin">
     <div class="option-editor-options">
-      <a  class="editor-option toggleOptionVisibility">
+
+        <a  class="editor-option editOption" style="cursor: pointer;">
+            <i style="cursor: pointer;" class="material-icons md-inherit">keyboard_arrow_left</i>
+          </a>
+
+          <a  class="editor-option editOption" style="cursor: pointer;">
+            <i style="cursor: pointer;" class="material-icons md-inherit">keyboard_arrow_right</i>
+          </a>
+
+      <a  class="editor-option toggleOptionVisibility" style="cursor: pointer;">
         <i *ngIf="selectedItem.visible" (click)="setVisible(false)" class="material-icons md-inherit">visibility</i>
         <i *ngIf="!selectedItem.visible" (click)="setVisible(true)" class="material-icons md-inherit">visibility_off</i>
       </a>
-      <a (click)="editOption()" class="editor-option editOption">
+      <a (click)="editOption()" class="editor-option editOption" style="cursor: pointer;">
         <i class="material-icons md-inherit">edit</i>
       </a>
-      <a (click)="openDeleteModel()" class="editor-option delOption">
+      <a (click)="openDeleteModel()" class="editor-option delOption" style="cursor: pointer;">
         <i class="material-icons md-inherit">close</i>
       </a>
     </div>

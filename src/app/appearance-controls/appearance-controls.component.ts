@@ -92,6 +92,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     color: any = "#000"
     imagePath: any;
     patternImage: any = "http://185.82.218.228:3001/assets/img/image-placeholder-png-4.png";
+    Packs : any = []
 
     undoManagerLimit() {
         return UndoMgr.getInstance().getIndex() + 1;
@@ -428,13 +429,13 @@ export class AppearanceControlsComponent implements OnDestroy {
         customizationData.weapons.forEach((weapon, wIdx) => {
             this.setupOptionTracking(customizationData.commonSections || [], weapon);
 
-            this.viewerService.viewer.load(weapon.modelFolder, weapon.modelFile, wIdx === 0, () => {
-                if (!!weapon.materials) {
-                    weapon.materials.forEach(createMaterial);
-                }
+            //this.viewerService.viewer.load(weapon.modelFolder, weapon.modelFile, wIdx === 0, () => {
+            //    if (!!weapon.materials) {
+            //        weapon.materials.forEach(createMaterial);
+            //    }
 
-                this.weaponSetup(weapon);
-            });
+            //    this.weaponSetup(weapon);
+            //});
         });
 
         this.chooseWeapon(null, customizationData.weapons[0]);
@@ -505,6 +506,11 @@ export class AppearanceControlsComponent implements OnDestroy {
         const input = await this.apiService.prepareNodeJSRequestObject("packs", "getpacks", null)
         const totalPacksArray: any = await this.apiService.execute(input, false)
         this.allpacks = totalPacksArray.apidata.Data;
+        if (this.Packs.length >0) {
+          for (let i = 0; i < this.Packs.length; i++) {
+            this.allpacks.push(this.Packs[i])
+          }
+        }
         this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
         console.log(this.packArray);
     }
@@ -530,12 +536,22 @@ export class AppearanceControlsComponent implements OnDestroy {
     async addPack() {
         var obj: any = {
             name: this.packName,
-            type: this.packtype
+            type: this.packtype,
+            _id: new Date().getTime(),
+            colors: [],
+            patterns: [],
+            metarials: [],
+            visible: true,
+            opname : "ADD"
         }
-        const input = this.apiService.prepareNodeJSRequestObject("packs", "addPack", obj)
-        await this.apiService.execute(input, false);
-        this.getPacks();
+        //const input = this.apiService.prepareNodeJSRequestObject("packs", "addPack", obj)
+        //await this.apiService.execute(input, false);
+        //this.getPacks();
+
         //this.onAddAndUpdate();
+        this.customizerDataService.dbData.push(obj);
+        this.Packs.push(obj)
+        this.getPacks();
         this.hideModal("addPack");
         this.packName = ""
 
@@ -866,6 +882,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         //await this.apiService.execute(input, false)
         var obj: any = { packid: this.selectedItem.pack_id, type: this.type, value: value, arrId: this.selectedItem._id };
         this.customizerDataService.setVisibleOfPackData(obj);
+        this.selectedItem.visible = value;
         this.onAddAndUpdate();
     }
 
@@ -914,10 +931,16 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async deployPackData() {
-        var obj: any = { dbData: this.customizerDataService.dbData, deleted: this.customizerDataService.deleted }
+      var obj: any = { dbData: this.customizerDataService.dbData, deleted: this.customizerDataService.deleted, weapons: this.customizerDataService.dbWeapons }
         const input = this.apiService.prepareNodeJSRequestObject("packs", "deployPack", obj)
         await this.apiService.execute(input, false);
         this.onAddAndUpdate();
         window.location.reload();
+    }
+
+    setVisibleofWeapon(weapons, value) {
+      var obj: any = { weapons: weapons, value: value }
+      this.customizerDataService.setVisibleofWeapon(obj);
+      this.onAddAndUpdate();
     }
 }

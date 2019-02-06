@@ -3,7 +3,7 @@
     <div class="col-auto gun-selector d-flex">
       <a href="#" (click)="toggleChoices($event)">
         <i class="material-icons">{{hideWeaponChoices ? 'expand_less' : 'expand_more'}}</i>
-        <div class="weapon-icon contain-svg" *ngIf="chosenWeapon && chosenWeapon.svgPath" [inlineSVG]="chosenWeapon.svgPath"></div>
+        <div class="weapon-icon contain-svg"  *ngIf="chosenWeapon && chosenWeapon.svgPath" [inlineSVG]="chosenWeapon.svgPath"></div>
         <div class="p-2 weapon-name">{{chosenWeapon.name}}</div>
       </a>
     </div>
@@ -15,7 +15,9 @@
       </a>
     </div>
     <div class="col-auto all-options" [class.put-away]="hideWeaponChoices">
-      <div class="weapon-option" *ngFor="let weapon of customizationData.weapons">
+      <div class="weapon-option" *ngFor="let weapon of (customizationData || {}).weapons">
+        <i style="cursor: pointer;margin-right:5px" *ngIf="weapon.visible" (click)="setVisibleofWeapon(weapon ,false)" class="material-icons md-inherit">visibility</i>
+        <i style="cursor: pointer;margin-right:5px" *ngIf="!weapon.visible" (click)="setVisibleofWeapon(weapon ,true)" class="material-icons md-inherit">visibility_off</i>
         <a class="d-inline-block" href="#" [class.active]="weapon == chosenWeapon" (click)="chooseWeapon($event, weapon)">
           <div class="weapon-icon contain-svg" [inlineSVG]="weapon.svgPath"></div>
           <div class="p-2 weapon-name">{{weapon.name}}</div>

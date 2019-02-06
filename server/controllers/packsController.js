@@ -1,5 +1,6 @@
 var lib = process.cwd()
 var Packs = require(lib + "/models/Packs")
+var Weapons = require(lib + "/models/weapons")
 
 module.exports = function () {
 
@@ -222,7 +223,9 @@ module.exports = function () {
 
 
   this.getdata = async function (data, options) {
-    return await Packs.find({});
+    let packs = await Packs.find({});
+    let weapons = await Weapons.find({})
+    return  {packs: packs, weapons: weapons}
   }
 
   this.editPack = async function (data, option) {
@@ -246,9 +249,34 @@ module.exports = function () {
     console.log(data)
     let dbData = data.dbData
     let deleted = data.deleted
+    let weapon = data.weapons
     if (dbData.length > 0) {
       for (let i = 0; i < dbData.length; i++) {
-        if (dbData[i].metarials.length > 0) {
+        if(dbData[i].opname && dbData[i].opname == "ADD"){
+          let arr = dbData[i]
+          delete arr.opname;
+          delete arr._id;
+
+          if(arr.metarials.length > 0){
+            for(let k=0; k<arr.metarials.length; k++){
+              delete arr.metarials[k]._id
+            }
+          }
+          if(arr.colors.length > 0){
+            for(let k=0; k<arr.colors.length; k++){
+              delete arr.colors[k]._id
+            }
+          }
+          if(arr.patterns.length > 0){
+            for(let k=0; k<arr.patterns.length; k++){
+              delete arr.patterns[k]._id
+            }
+          }
+
+          let newPack = new Packs(arr);
+          let temp = await newPack.save();
+        }
+        else if (dbData[i].metarials.length > 0) {
           for (let j = 0; j < dbData[i].metarials.length; j++) {
             let arr = []
             if (dbData[i].metarials[j].opname && dbData[i].metarials[j].opname == "ADD") {
@@ -384,6 +412,14 @@ module.exports = function () {
             }, {
               new: true
             })
+        }
+      }
+    }
+
+    if(weapon.length>0){
+      for(let i = 0; i<weapon.length; i++){
+        if(weapon[i].opname){
+          let temp = await Weapons.update({_id: weapon[i]._id}, {$set:{"visible" : weapon[i].visible}})
         }
       }
     }

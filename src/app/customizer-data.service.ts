@@ -13,7 +13,8 @@ export interface AppearanceOption {
   pack_id?: string,
   roughness?: string,
   visible?: boolean,
-  metal?: boolean
+  metal?: boolean,
+  order?: number
 }
 
 export interface AppearanceOptionGroup {
@@ -760,6 +761,7 @@ export class CustomizerDataService {
   }
 
   dbData: any = null;
+  dbWeapons: any = null;
   async weaponsData() {
     const apiUrl = environment.apiBaseURL + 'api/manager';
     var toSend = {
@@ -768,7 +770,8 @@ export class CustomizerDataService {
       Data: { role: 'addmin' }
     }
     const api_response = await this.http.post<any>(apiUrl, toSend).toPromise();
-    this.dbData = api_response.Data;
+    this.dbData = api_response.Data.packs;
+    this.dbWeapons = api_response.Data.weapons;
     return this.prepareData(); //this.dbData;
   }
 
@@ -1316,6 +1319,7 @@ export class CustomizerDataService {
       }
       ]
     };
+    obj.weapons = this.dbWeapons;
     var temp = this.dbData;
     obj.commonSections[0].optionGroups[0].options = [];
     obj.commonSections[1].optionGroups[0].options = [];
@@ -1330,6 +1334,7 @@ export class CustomizerDataService {
 
       for (let i = 0; i < temp.length; i++) {
         if (temp[i].metarials.length > 0) {
+          temp[i].metarials.sort('');
           for (let j = 0; j < temp[i].metarials.length; j++) {
             let option: any = {}
 
@@ -1342,6 +1347,7 @@ export class CustomizerDataService {
             option.visible = temp[i].metarials[j].visible;
             option.metal = temp[i].metarials[j].metal;
             option.displayColor = temp[i].metarials[j].colors;
+            option.order = temp[i].metarials[j].order;
 
             if (isAdmin) {
               obj.commonSections[0].optionGroups[0].options.push(option)
@@ -1407,6 +1413,9 @@ export class CustomizerDataService {
       console.log(this.dbData)
       let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
       if (i > -1) {
+        if (this.dbData[i].opname) {
+          delete obj.metarials[0].opname;
+        }
         this.dbData[i].metarials.push(obj.metarials[0])
       }
     }
@@ -1414,6 +1423,9 @@ export class CustomizerDataService {
       console.log(this.dbData)
       let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
       if (i > -1) {
+        if (this.dbData[i].opname) {
+          delete obj.colors[0].opname;
+        }
         this.dbData[i].colors.push(obj.colors[0])
       }
     }
@@ -1421,6 +1433,9 @@ export class CustomizerDataService {
       console.log(this.dbData)
       let i = _.findIndex(this.dbData, function (t) { return t._id == obj.packid })
       if (i > -1) {
+        if (this.dbData[i].opname) {
+          delete obj.patterns[0].opname;
+        }
         this.dbData[i].patterns.push(obj.patterns[0])
       }
     }
@@ -1552,6 +1567,14 @@ export class CustomizerDataService {
       }
     }
     localStorage.setItem("Packs", JSON.stringify(this.dbData))
+  }
+
+  setVisibleofWeapon(obj) {
+    let i = _.findIndex(this.dbWeapons, function (t) { return t._id == obj.weapons._id })
+    if (i > -1) {
+      this.dbWeapons[i].visible = obj.value
+      this.dbWeapons[i].opname = "EDIT"
+    }
   }
 
   weaponsDataLocal() {

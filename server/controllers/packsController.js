@@ -223,8 +223,14 @@ module.exports = function () {
 
 
   this.getdata = async function (data, options) {
+    let findCondition = null
+    if (data.role != "admin") {
+    findCondition = {
+      visible: true
+    };
+  }
     let packs = await Packs.find({});
-    let weapons = await Weapons.find({})
+    let weapons = await Weapons.find(findCondition)
     return  {packs: packs, weapons: weapons}
   }
 

@@ -58,6 +58,8 @@ export class NavBarComponent implements OnInit {
             // TODO
         } else {
             //this.openModal = this.modalService.show(LoginModalComponent);
+          $('#loginUsername').val('')
+          $('#loginPassword').val('')
             $("#loginmodel").show();
         }
 
@@ -109,10 +111,10 @@ export class NavBarComponent implements OnInit {
         $("#loginmodel").hide();
       }
       else {
-        alert("Invlida user name and password");
+        alert("Invalid user name and password");
       }
     } else {
-      alert("Invlida user name and password");
+      alert("Invalid user name and password");
     }
   }
 

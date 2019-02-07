@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { _ } from "underscore";
+import { UserService } from './user.service';
 
 export interface AppearanceOption {
   name: string;
@@ -13,7 +14,8 @@ export interface AppearanceOption {
   pack_id?: string,
   roughness?: string,
   visible?: boolean,
-  metal?: boolean
+  metal?: boolean,
+  order?: number
 }
 
 export interface AppearanceOptionGroup {
@@ -74,7 +76,7 @@ export interface WeaponCustomizationData {
   providedIn: 'root'
 })
 export class CustomizerDataService {
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient, private userService: UserService) { }
 
   generateTextureOptions(count: number, filePattern: string, descriptionPattern: string): AppearanceOption[] {
     const options: AppearanceOption[] = [];
@@ -763,16 +765,27 @@ export class CustomizerDataService {
   dbWeapons: any = null;
   async weaponsData() {
     const apiUrl = environment.apiBaseURL + 'api/manager';
+    let role = null;
+    if (this.userService.isAdmin()) {
+      role = 'admin'
+    }
     var toSend = {
       PRCID: 'packs',
       Method: 'getdata',
-      Data: { role: 'addmin' }
+      Data: { role: role }
     }
     const api_response = await this.http.post<any>(apiUrl, toSend).toPromise();
     this.dbData = api_response.Data.packs;
     this.dbWeapons = api_response.Data.weapons;
     return this.prepareData(); //this.dbData;
   }
+
+
+   compare(a, b) {
+  if (a.order > b.order) return 1;
+  if (b.order > a.order) return -1;
+  return 0;
+}
 
   prepareData() {
     var isAdmin = true;
@@ -812,511 +825,7 @@ export class CustomizerDataService {
         }]
       }
       ],
-      weapons: [{
-        name: 'M1 Garand',
-        modelFolder: 'assets/models/m1garand/',
-        modelFile: 'M1Combined.gltf',
-        svgPath: 'assets/img/weapon-icons/m1_garand.svg',
-        materials: [{
-          name: 'M1Bayonet',
-          texture: 'assets/textures/m1garand/M1Garand_Bayonet_BaseColor.jpg',
-          metallicRoughnessMap: 'assets/textures/m1garand/M1Garand_Bayonet_MetallicRoughness.jpg',
-          normalMap: 'assets/textures/m1garand/M1Garand_Bayonet_Normal.jpg'
-        },
-        {
-          name: 'M1ExperimentalScope',
-          texture: 'assets/textures/m1garand/M1Garand_ExperimentalScope_BaseColor.jpg',
-          metallicRoughnessMap: 'assets/textures/m1garand/M1Garand_ExperimentalScope_MetallicRoughness.jpg',
-          normalMap: 'assets/textures/m1garand/M1Garand_ExperimentalScope_Normal.jpg'
-        },
-        {
-          name: 'M1M84Scope',
-          texture: 'assets/textures/m1garand/M1Garand_M84Scope_BaseColor.jpg',
-          metallicRoughnessMap: 'assets/textures/m1garand/M1Garand_M84Scope_MetallicRoughness.jpg',
-          normalMap: 'assets/textures/m1garand/M1Garand_M84Scope_Normal.jpg'
-        },
-        {
-          name: 'M1MuzzleMods',
-          texture: 'assets/textures/m1garand/M1Garand_MuzzleMods_BaseColor.jpg',
-          metallicRoughnessMap: 'assets/textures/m1garand/M1Garand_MuzzleMods_MetallicRoughness.jpg',
-          normalMap: 'assets/textures/m1garand/M1Garand_MuzzleMods_Normal.jpg'
-        },
-        {
-          name: 'M1Body',
-          color: '#70240b',
-          texture: 'assets/textures/m1garand/body_Detail.jpg',
-          roughness: 1.00,
-          normalMap: 'assets/textures/m1garand/body_normal.jpg'
-        },
-        {
-          name: 'M1TopBody',
-          color: '#70240b',
-          texture: 'assets/textures/m1garand/top_body_Detail.jpg',
-          roughness: 1.00,
-          normalMap: 'assets/textures/m1garand/top_body_normal.jpg'
-        },
-        {
-          name: 'M1Barrel',
-          color: '#c4c7c7',
-          texture: 'assets/textures/m1garand/barrel_Detail.jpg',
-          metal: true,
-          roughness: 0.95,
-          normalMap: 'assets/textures/m1garand/barrel_normal.jpg'
-        },
-        {
-          name: 'M1Mechanical',
-          color: '#484B51',
-          texture: 'assets/textures/m1garand/receiver_Detail.jpg',
-          metal: true,
-          roughness: 0.95,
-          normalMap: 'assets/textures/m1garand/receiver_normal.jpg'
-        },
-        {
-          name: 'M1Parts',
-          color: '#464A55',
-          texture: 'assets/textures/m1garand/parts_Detail.jpg',
-          metal: true,
-          roughness: 0.95,
-          normalMap: 'assets/textures/m1garand/partsn.jpg'
-        }
-        ],
-        replaceMaterials: [{
-          newMaterialName: 'M1Bayonet',
-          oldMaterialNames: ['M1Garand_Bayonet']
-        },
-        {
-          newMaterialName: 'M1ExperimentalScope',
-          oldMaterialNames: ['M1Garand_ExperimentalSight']
-        },
-        {
-          newMaterialName: 'M1M84Scope',
-          oldMaterialNames: ['lambert5']
-        },
-        {
-          newMaterialName: 'M1MuzzleMods',
-          oldMaterialNames: ['M1Garand_Muzzle']
-        },
-        {
-          newMaterialName: 'M1Body',
-          oldMaterialNames: ['lambert6']
-        },
-        {
-          newMaterialName: 'M1TopBody',
-          oldMaterialNames: ['lambert10']
-        },
-        {
-          newMaterialName: 'M1Barrel',
-          oldMaterialNames: ['lambert9']
-        },
-        {
-          newMaterialName: 'M1Mechanical',
-          oldMaterialNames: ['lambert7']
-        },
-        {
-          newMaterialName: 'M1Parts',
-          oldMaterialNames: ['lambert8']
-        }
-        ],
-        setupActions: [{
-          type: 'hideMesh',
-          target: 'Experimental_Sights'
-        },
-        {
-          type: 'hideMesh',
-          target: 'M84_Scope'
-        },
-        {
-          type: 'hideMesh',
-          target: 'Bayonet'
-        },
-        {
-          type: 'hideMesh',
-          target: 'Flash_Hider'
-        },
-        {
-          type: 'hideMesh',
-          target: 'Suppressor'
-        }
-        ],
-        customizations: [{
-          svgPath: 'assets/img/section-icons/grip.svg',
-          name: 'Attachments',
-          globalReset: true,
-          interactionType: 'toggleMesh',
-          optionGroups: [{
-            allowNone: true,
-            options: [{
-              name: 'Experimental Sight',
-              displayImg: 'assets/img/m1garand-icons/Icon_ExpSight.png',
-              interactionValue: 'Experimental_Sights'
-            },
-            {
-              name: 'M84 Scope',
-              displayImg: 'assets/img/m1garand-icons/Icon_M84Scope.png',
-              interactionValue: 'M84_Scope'
-            }
-            ]
-          },
-          {
-            allowNone: true,
-            options: [{
-              name: 'Bayonet',
-              displayImg: 'assets/img/m1garand-icons/Icon_Bayonet.png',
-              interactionValue: 'Bayonet'
-            }]
-          },
-          {
-            allowNone: true,
-            options: [{
-              name: 'Flash Hider',
-              displayImg: 'assets/img/m1garand-icons/Icon_FlashHider.png',
-              interactionValue: 'Flash_Hider'
-            },
-            {
-              name: 'Suppressor',
-              displayImg: 'assets/img/m1garand-icons/Icon_Suppressor.png',
-              interactionValue: 'Suppressor'
-            }
-            ]
-          }
-          ]
-        }]
-      },
-      {
-        name: 'Assault Rifle',
-        modelFolder: 'assets/models/assault-rifle/',
-        modelFile: 'assault-rifle.gltf',
-        svgPath: 'assets/img/weapon-icons/assault-rifle.svg',
-        rotation: 180,
-        materials: [{
-          name: 'honey_badger_mat_new',
-          texture: 'assets/models/assault-rifle/honey_badger_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/honey_badger_mat_baseColor.jpg',
-          normalMap: 'assets/models/assault-rifle/honey_badger_mat_baseColor.jpg',
-
-        },
-        {
-          name: 'silencer03_mat_new',
-          texture: 'assets/models/assault-rifle/silencer03_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/silencer03_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/silencer03_mat_baseColor.jpg'
-        },
-        {
-          name: 'silencer01_mat_new',
-          texture: 'assets/models/assault-rifle/silencer01_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/silencer01_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/silencer01_mat_baseColor.jpg'
-        },
-        {
-          name: 'silencer02_mat_new',
-          texture: 'assets/models/assault-rifle/silencer02_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/silencer02_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/silencer02_mat_baseColor.jpg'
-        },
-        {
-          name: 'grip02_mat_new',
-          texture: 'assets/models/assault-rifle/grip02_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/grip02_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/grip02_mat_baseColor.jpg'
-        },
-        {
-          name: 'reflect_sight_mat_new',
-          texture: 'assets/models/assault-rifle/reflect_sight_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/reflect_sight_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/reflect_sight_mat_baseColor.jpg'
-        },
-        {
-          name: 'red_dot_sight_mat_new',
-          texture: 'assets/models/assault-rifle/red_dot_sight_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/red_dot_sight_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/red_dot_sight_mat_baseColor.jpg'
-        },
-        {
-          name: 'holographic_sight_mat_new',
-          texture: 'assets/models/assault-rifle/holographic_sight_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/holographic_sight_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/holographic_sight_mat_baseColor.jpg'
-        },
-        {
-          name: 'grip01_mat_new',
-          texture: 'assets/models/assault-rifle/grip01_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/grip01_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/grip01_mat_baseColor.jpg'
-        },
-        {
-          name: 'grip03_mat_new',
-          texture: 'assets/models/assault-rifle/grip03_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/grip03_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/grip03_mat_baseColor.jpg'
-        },
-        {
-          name: 'tactical_laser_mat_new',
-          texture: 'assets/models/assault-rifle/tactical_laser_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/tactical_laser_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/tactical_laser_mat_baseColor.jpg'
-        },
-        {
-          name: 'acog_mat_new',
-          texture: 'assets/models/assault-rifle/acog_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/acog_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/acog_mat_baseColor.jpg'
-        },
-        {
-          name: 'flash_light_mat_new',
-          texture: 'assets/models/assault-rifle/flash_light_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/flash_light_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/flash_light_mat_baseColor.jpg'
-        },
-        {
-          name: 'scope_mat_new',
-          texture: 'assets/models/assault-rifle/scope_mat_baseColor.jpg',
-          // metallicRoughnessMap: 'assets/models/assault-rifle/scope_mat_emissive.jpg',
-          normalMap: 'assets/models/assault-rifle/scope_mat_baseColor.jpg'
-        },
-        ],
-        replaceMaterials: [{
-          newMaterialName: 'acog_mat_new',
-          oldMaterialNames: ['acog_mat']
-        },
-        {
-          newMaterialName: 'flash_light_mat_new',
-          oldMaterialNames: ['flash_light_mat']
-        },
-        {
-          newMaterialName: 'grip01_mat_new',
-          oldMaterialNames: ['grip01_mat']
-        },
-        {
-          newMaterialName: 'grip02_mat_new',
-          oldMaterialNames: ['grip02_mat']
-        },
-        {
-          newMaterialName: 'grip03_mat_new',
-          oldMaterialNames: ['grip03_mat']
-        },
-        {
-          newMaterialName: 'honey_badger_mat_new',
-          oldMaterialNames: ['honey_badger_mat']
-        },
-        {
-          newMaterialName: 'holographic_sight_mat_new',
-          oldMaterialNames: ['holographic_sight_mat']
-        },
-        {
-          newMaterialName: 'red_dot_sight_mat_new',
-          oldMaterialNames: ['red_dot_sight_mat']
-        },
-        {
-          newMaterialName: 'reflect_sight_mat_new',
-          oldMaterialNames: ['reflect_sight_mat']
-        },
-        {
-          newMaterialName: 'scope_mat_new',
-          oldMaterialNames: ['scope_mat']
-        },
-        {
-          newMaterialName: 'silencer01_mat_new',
-          oldMaterialNames: ['silencer01_mat']
-        },
-        {
-          newMaterialName: 'silencer02_mat_new',
-          oldMaterialNames: ['silencer02_mat']
-        },
-
-        {
-          newMaterialName: 'silencer03_mat_new',
-          oldMaterialNames: ['silencer03_mat']
-        },
-
-        {
-          newMaterialName: 'tactical_laser_mat_new',
-          oldMaterialNames: ['tactical_laser_mat']
-        },
-        ],
-
-
-
-
-        setupActions: [{
-          type: 'showMesh',
-          target: 'magazine'
-        },
-        {
-          type: 'hideMesh',
-          target: 'acog'
-        },
-        {
-          type: 'hideMesh',
-          target: 'double_magazine'
-        },
-        {
-          type: 'hideMesh',
-          target: 'extended_magazine'
-        },
-        {
-          type: 'hideMesh',
-          target: 'flash_light'
-        },
-        {
-          type: 'hideMesh',
-          target: 'grip01'
-        },
-        {
-          type: 'hideMesh',
-          target: 'grip02'
-        },
-        {
-          type: 'hideMesh',
-          target: 'grip03'
-        },
-        {
-          type: 'hideMesh',
-          target: 'holographic_sight'
-        },
-        {
-          type: 'hideMesh',
-          target: 'red_dot_sight'
-        },
-        {
-          type: 'hideMesh',
-          target: 'silencer01'
-        },
-        {
-          type: 'hideMesh',
-          target: 'silencer02'
-        },
-        {
-          type: 'hideMesh',
-          target: 'silencer03'
-        },
-        {
-          type: 'hideMesh',
-          target: 'tactical_laser'
-        },
-        {
-          type: 'hideMesh',
-          target: 'scope'
-        },
-        {
-          type: 'hideMesh',
-          target: 'reflect_sight'
-        }
-        ],
-        customizations: [{
-          svgPath: 'assets/img/section-icons/grip.svg',
-          name: 'Attachments',
-          globalReset: true,
-          interactionType: 'toggleMesh',
-          optionGroups: [{
-            allowNone: true,
-            options: [{
-              name: 'acog',
-              displayImg: 'assets/img/assault-rifle/icon_acog.png',
-              interactionValue: 'acog'
-            },
-            {
-              name: 'holographic sight',
-              displayImg: 'assets/img/assault-rifle/icon_holographic_sight.png',
-              interactionValue: 'holographic_sight'
-            },
-            {
-              name: 'red_dot_sight',
-              displayImg: 'assets/img/assault-rifle/icon_red_dot_sight.png',
-              interactionValue: 'red_dot_sight'
-            },
-            {
-              name: 'reflect_sight',
-              displayImg: 'assets/img/assault-rifle/icon_reflex_sight.png',
-              interactionValue: 'reflect_sight'
-            },
-            {
-              name: 'scope',
-              displayImg: 'assets/img/assault-rifle/icon_scope.png',
-              interactionValue: 'scope'
-            }
-            ]
-          },
-          {
-            allowNone: true,
-            options: [{
-              name: 'magazine',
-              displayImg: 'assets/img/assault-rifle/icon_magazine.png',
-              interactionValue: 'magazine'
-            },
-            {
-              name: 'extended_magazine',
-              displayImg: 'assets/img/assault-rifle/icon_extended_magazine.png',
-              interactionValue: 'extended_magazine'
-            },
-            {
-              name: 'double_magazine',
-              displayImg: 'assets/img/assault-rifle/icon_double_magazine.png',
-              interactionValue: 'double_magazine'
-            }
-            ]
-          },
-
-          {
-            allowNone: true,
-            options: [{
-              name: 'flashlight',
-              displayImg: 'assets/img/assault-rifle/icon_flashlight.png',
-              interactionValue: 'flash_light'
-            }]
-          },
-
-          {
-            allowNone: true,
-            options: [{
-              name: 'grip01',
-              displayImg: 'assets/img/assault-rifle/icon_grip01.png',
-              interactionValue: 'grip01'
-            },
-            {
-              name: 'grip02',
-              displayImg: 'assets/img/assault-rifle/icon_grip02.png',
-              interactionValue: 'grip02'
-            },
-            {
-              name: 'grip03',
-              displayImg: 'assets/img/assault-rifle/icon_grip03.png',
-              interactionValue: 'grip03'
-            }
-            ]
-          },
-          {
-            allowNone: true,
-            options: [{
-              name: 'silencer01',
-              displayImg: 'assets/img/assault-rifle/icon_sliencer01.png',
-              interactionValue: 'silencer01'
-            },
-            {
-              name: 'silencer02',
-              displayImg: 'assets/img/assault-rifle/icon_sliencer02.png',
-              interactionValue: 'silencer02'
-            },
-            {
-              name: 'silencer03',
-              displayImg: 'assets/img/assault-rifle/icon_sliencer03.png',
-              interactionValue: 'silencer03'
-            }
-            ]
-          },
-          {
-            allowNone: true,
-            options: [{
-              name: 'tactical_laser',
-              displayImg: 'assets/img/assault-rifle/icon_tactical_laser.png',
-              interactionValue: 'tactical_laser'
-            }]
-          }
-          ]
-        }
-
-        ]
-      }
-      ]
+      weapons: []
     };
     obj.weapons = this.dbWeapons;
     var temp = this.dbData;
@@ -1333,6 +842,7 @@ export class CustomizerDataService {
 
       for (let i = 0; i < temp.length; i++) {
         if (temp[i].metarials.length > 0) {
+
           for (let j = 0; j < temp[i].metarials.length; j++) {
             let option: any = {}
 
@@ -1345,12 +855,14 @@ export class CustomizerDataService {
             option.visible = temp[i].metarials[j].visible;
             option.metal = temp[i].metarials[j].metal;
             option.displayColor = temp[i].metarials[j].colors;
+            option.order = temp[i].metarials[j].order;
 
             if (isAdmin) {
               obj.commonSections[0].optionGroups[0].options.push(option)
             } else if (temp[i].metarials[j].visible) {
               obj.commonSections[0].optionGroups[0].options.push(option)
             }
+
 
             let commonMaterials: any = {}
             commonMaterials.name = temp[i].metarials[j].name
@@ -1360,6 +872,9 @@ export class CustomizerDataService {
 
             obj.commonMaterials.push(commonMaterials)
           }
+
+          obj.commonSections[0].optionGroups[0].options.sort(this.compare);
+
         }
         if (temp[i].colors.length > 0) {
           for (let j = 0; j < temp[i].colors.length; j++) {
@@ -1371,6 +886,7 @@ export class CustomizerDataService {
             option.pack_id = temp[i]._id;
             option._id = temp[i].colors[j]._id;
             option.visible = temp[i].colors[j].visible;
+            option.order = temp[i].colors[j].order;
 
             if (isAdmin) {
               obj.commonSections[1].optionGroups[0].options.push(option)
@@ -1378,6 +894,8 @@ export class CustomizerDataService {
               obj.commonSections[1].optionGroups[0].options.push(option)
             }
           }
+
+          obj.commonSections[1].optionGroups[0].options.sort(this.compare);
         }
         if (temp[i].patterns.length > 0) {
           for (let j = 0; j < temp[i].patterns.length; j++) {
@@ -1389,6 +907,7 @@ export class CustomizerDataService {
             option.pack_id = temp[i]._id;
             option._id = temp[i].patterns[j]._id;
             option.visible = temp[i].patterns[j].visible;
+            option.order = temp[i].patterns[j].order;
 
             if (isAdmin) {
               obj.commonSections[2].optionGroups[0].options.push(option)
@@ -1396,11 +915,24 @@ export class CustomizerDataService {
               obj.commonSections[2].optionGroups[0].options.push(option)
             }
           }
+
+          obj.commonSections[2].optionGroups[0].options.sort(this.compare);
         }
       }
 
     }
     return obj;
+   }
+
+  getOrder(arr) {
+    var order = 0;
+    if (arr.length > 0) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].order > order)
+          order = arr[i].order;
+      }
+    }
+    return order + 1;
   }
 
   addDataOnPacks(obj) {
@@ -1413,7 +945,10 @@ export class CustomizerDataService {
         if (this.dbData[i].opname) {
           delete obj.metarials[0].opname;
         }
-        this.dbData[i].metarials.push(obj.metarials[0])
+        let order = this.getOrder(this.dbData[i].metarials);
+        obj.metarials[0].order = order
+
+        this.dbData[i].metarials.push(obj.metarials[0]);
       }
     }
     else if (obj.colors){
@@ -1423,6 +958,10 @@ export class CustomizerDataService {
         if (this.dbData[i].opname) {
           delete obj.colors[0].opname;
         }
+
+        let order = this.getOrder(this.dbData[i].colors);
+        obj.colors[0].order = order
+
         this.dbData[i].colors.push(obj.colors[0])
       }
     }
@@ -1433,6 +972,10 @@ export class CustomizerDataService {
         if (this.dbData[i].opname) {
           delete obj.patterns[0].opname;
         }
+
+        let order = this.getOrder(this.dbData[i].patterns);
+        obj.patterns[0].order = order
+
         this.dbData[i].patterns.push(obj.patterns[0])
       }
     }
@@ -1572,6 +1115,98 @@ export class CustomizerDataService {
       this.dbWeapons[i].visible = obj.value
       this.dbWeapons[i].opname = "EDIT"
     }
+  }
+
+  moveLeft(data) {
+
+    if (data.type == "MATERIALS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].metarials.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].metarials, function (t) { return t._id == data.arrId })
+        if (j > -1 && data.order > 1) {
+          this.dbData[i].metarials[j].order = this.dbData[i].metarials[j - 1].order
+          this.dbData[i].metarials[j].opname = 'EDIT'
+          this.dbData[i].metarials[j - 1].order = data.order
+          this.dbData[i].metarials[j-1].opname = 'EDIT'
+        }
+      }
+    }
+    else if (data.type == "COLORS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].colors.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].colors, function (t) { return t._id == data.arrId })
+        if (j > -1 && data.order > 1) {
+          this.dbData[i].colors[j].order = this.dbData[i].colors[j - 1].order
+          this.dbData[i].colors[j].opname = 'EDIT'
+          this.dbData[i].colors[j - 1].order = data.order
+          this.dbData[i].colors[j - 1].opname = 'EDIT'
+        }
+      }
+    }
+    else if (data.type == "PATTERNS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].patterns.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == data.arrId })
+        if (j > -1 && data.order > 1) {
+          this.dbData[i].patterns[j].order = this.dbData[i].patterns[j - 1].order
+          this.dbData[i].patterns[j].opname = 'EDIT'
+          this.dbData[i].patterns[j - 1].order = data.order
+          this.dbData[i].patterns[j - 1].opname = 'EDIT'
+        }
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
+  }
+
+
+  moveRight(data) {
+
+    if (data.type == "MATERIALS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].metarials.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].metarials, function (t) { return t._id == data.arrId })
+        let max = this.getOrder(this.dbData[i].metarials)
+        if (j > -1 && data.order < max-1) {
+          this.dbData[i].metarials[j].order = this.dbData[i].metarials[j + 1].order
+          this.dbData[i].metarials[j].opname = 'EDIT'
+          this.dbData[i].metarials[j + 1].order = data.order
+          this.dbData[i].metarials[j + 1].opname = 'EDIT'
+        }
+      }
+    }
+    else if (data.type == "COLORS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].colors.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].colors, function (t) { return t._id == data.arrId })
+        let max = this.getOrder(this.dbData[i].colors)
+        if (j > -1 && data.order < max - 1) {
+          this.dbData[i].colors[j].order = this.dbData[i].colors[j + 1].order
+          this.dbData[i].colors[j].opname = 'EDIT'
+          this.dbData[i].colors[j + 1].order = data.order
+          this.dbData[i].colors[j + 1].opname = 'EDIT'
+        }
+      }
+    }
+    else if (data.type == "PATTERNS") {
+      let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
+      if (i > -1) {
+        this.dbData[i].patterns.sort(this.compare);
+        let j = _.findIndex(this.dbData[i].patterns, function (t) { return t._id == data.arrId })
+        let max = this.getOrder(this.dbData[i].patterns)
+        if (j > -1 && data.order < max - 1) {
+          this.dbData[i].patterns[j].order = this.dbData[i].patterns[j + 1].order
+          this.dbData[i].patterns[j].opname = 'EDIT'
+          this.dbData[i].patterns[j + 1].order = data.order
+          this.dbData[i].patterns[j + 1].opname = 'EDIT'
+        }
+      }
+    }
+    localStorage.setItem("Packs", JSON.stringify(this.dbData))
   }
 
   weaponsDataLocal() {

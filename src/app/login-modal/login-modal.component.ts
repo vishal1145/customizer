@@ -32,10 +32,10 @@ export class LoginModalComponent implements OnInit {
         this.close();
       }
       else {
-        alert("Invlida user name and password");
+        alert("Invalid user name and password");
       }
     } else {
-      alert("Invlida user name and password");
+      alert("Invalid user name and password");
     }
   }
 }

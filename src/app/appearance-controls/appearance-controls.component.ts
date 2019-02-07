@@ -17,6 +17,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 declare var $: any;
 import { environment } from '../../environments/environment';
 import { UserService } from '../user.service';
+import { _ } from "underscore";
 
 export interface DeepActiveAppearanceTracking {
     activeSection: AppearanceSection;
@@ -99,11 +100,15 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     activeTracking(): DeepActiveAppearanceTracking {
+      if (this.chosenWeapon) {
         return this.selectedItems.get(this.chosenWeapon);
+      }
     }
 
     activeSection(): AppearanceSection {
+      if (this.activeTracking() && this.activeTracking().activeSection) {
         return this.activeTracking().activeSection;
+      }
     }
 
 
@@ -685,6 +690,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('my-modal');
+        this.selectedItem = null
     }
 
     colorModelChanged(data) {
@@ -713,6 +719,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal("addColor");
+        this.selectedItem = null
     }
 
     async addPatternse() {
@@ -737,6 +744,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('patterns')
+        this.selectedItem = null
     }
 
     selectedItem = null;
@@ -802,6 +810,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
         this.onAddAndUpdate();
         this.hideModal('my-modal');
+        this.selectedItem = null
     }
 
     async editColor() {
@@ -823,6 +832,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
         this.onAddAndUpdate();
         this.hideModal('addColor');
+        this.selectedItem = null
     }
 
     async editPatternse() {
@@ -849,6 +859,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.editDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('patterns');
+        this.selectedItem = null
     }
 
     openDeleteModel() {
@@ -870,6 +881,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.deleteDataOnPack(obj);
         this.onAddAndUpdate();
         this.hideModal("deletModel");
+        this.selectedItem = null
     }
 
     async setVisible(value) {
@@ -884,6 +896,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.setVisibleOfPackData(obj);
         this.selectedItem.visible = value;
         this.onAddAndUpdate();
+        this.selectedItem = null
     }
 
     async setVisibleofPack(pack: any, b) {
@@ -942,5 +955,19 @@ export class AppearanceControlsComponent implements OnDestroy {
       var obj: any = { weapons: weapons, value: value }
       this.customizerDataService.setVisibleofWeapon(obj);
       this.onAddAndUpdate();
+    }
+
+    moveLeft(data) {
+      var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
+      this.customizerDataService.moveLeft(obj);
+      this.onAddAndUpdate();
+      this.selectedItem = null
+    }
+
+    moveRight(data) {
+      var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
+      this.customizerDataService.moveRight(obj);
+      this.onAddAndUpdate();
+      this.selectedItem = null
     }
 }

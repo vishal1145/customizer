@@ -114,15 +114,19 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     allitemSelected = true;
+    sectionIndex = 0;
     changeSection(event: MouseEvent, section: AppearanceSection) {
         this.activeTracking().activeSection = section;
         console.log(section.name)
         if (section.name == "Material") {
+            this.sectionIndex = 0; 
             this.type = "MATERIALS"
         } else if (section.name == "Color") {
             this.type = "COLORS"
+            this.sectionIndex = 1;
         } else if (section.name == "Patterns") {
             this.type = "PATTERNS"
+            this.sectionIndex = 2;
         }
         this.packtype = this.type;
         this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
@@ -361,6 +365,32 @@ export class AppearanceControlsComponent implements OnDestroy {
         });
     }
 
+    setupOptionTrackingByCommonSection(commonSections: AppearanceSection[], weapon: WeaponCustomization, resetIndex) {
+        const groupOptionTracking = new Map<AppearanceOptionGroup, AppearanceOption>();
+
+        commonSections.slice()
+            .concat(weapon.customizations.slice())
+            .forEach(function (customization) {
+                customization.optionGroups.forEach(function (optionGroup) {
+                    let defaultSelected: AppearanceOption = null;
+
+                    if (typeof optionGroup.defaultSelected === 'number') {
+                        defaultSelected = optionGroup.options[optionGroup.defaultSelected];
+                    } else if (!optionGroup.allowNone && (optionGroup.options.length > 0)) {
+                        defaultSelected = optionGroup.options[0];
+                    }
+
+                    groupOptionTracking.set(optionGroup, defaultSelected);
+                });
+            });
+
+        this.selectedItems.set(weapon, {
+            activeSection: (commonSections.length !== 0) ? commonSections[resetIndex] : weapon.customizations[0],
+            resetActive: false,
+            chosenGroupOption: groupOptionTracking
+        });
+    }
+
     stopEvent(event: MouseEvent) {
         if (event) {
             event.preventDefault();
@@ -432,7 +462,9 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
 
         customizationData.weapons.forEach((weapon, wIdx) => {
-            this.setupOptionTracking(customizationData.commonSections || [], weapon);
+            
+            //this.setupOptionTracking(customizationData.commonSections || [], weapon);
+            this.setupOptionTrackingByCommonSection(customizationData.commonSections || [], weapon,this.sectionIndex);
 
             //this.viewerService.viewer.load(weapon.modelFolder, weapon.modelFile, wIdx === 0, () => {
             //    if (!!weapon.materials) {

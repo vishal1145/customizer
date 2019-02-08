@@ -252,10 +252,10 @@ module.exports = function () {
 
 
   this.deployPack = async function (data, options) {
-    console.log(data)
     let dbData = data.dbData
     let deleted = data.deleted
     let weapon = data.weapons
+    let deletePack = data.deletedPack
     if (dbData.length > 0) {
       for (let i = 0; i < dbData.length; i++) {
         if(dbData[i].opname && dbData[i].opname == "ADD"){
@@ -281,6 +281,28 @@ module.exports = function () {
 
           let newPack = new Packs(arr);
           let temp = await newPack.save();
+        }
+        if(dbData[i].opname && dbData[i].opname == "EDIT"){
+          let arr = dbData[i]
+
+          // if(arr.metarials.length > 0){
+          //   for(let k=0; k<arr.metarials.length; k++){
+          //     delete arr.metarials[k]._id
+          //   }
+          // }
+          // if(arr.colors.length > 0){
+          //   for(let k=0; k<arr.colors.length; k++){
+          //     delete arr.colors[k]._id
+          //   }
+          // }
+          // if(arr.patterns.length > 0){
+          //   for(let k=0; k<arr.patterns.length; k++){
+          //     delete arr.patterns[k]._id
+          //   }
+          // }
+
+          //let newPack = new Packs(arr);
+          let temp = await Packs.update({_id : dbData[i]._id},{$set : arr}, {new : true});
         }
         else if (dbData[i].metarials.length > 0) {
           for (let j = 0; j < dbData[i].metarials.length; j++) {
@@ -420,6 +442,12 @@ module.exports = function () {
             })
         }
       }
+    }
+
+    if(deletePack.length > 0){
+    for(let i=0; i<deletePack.length; i++){
+    let temp = await Packs.remove({ "_id": deletePack[i].packid });
+    }
     }
 
     if(weapon.length>0){

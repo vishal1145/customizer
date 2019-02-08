@@ -88,11 +88,11 @@
   <div class="row option-editor" *ngIf="selectedItem && isAdmin">
     <div class="option-editor-options">
 
-        <a  class="editor-option editOption" style="cursor: pointer;">
+        <a *ngIf="allitemSelected == false"  class="editor-option editOption" style="cursor: pointer;">
             <i style="cursor: pointer;" (click)="moveLeft(selectedItem)" class="material-icons md-inherit">keyboard_arrow_left</i>
           </a>
 
-          <a  class="editor-option editOption" style="cursor: pointer;">
+          <a *ngIf="allitemSelected == false"  class="editor-option editOption" style="cursor: pointer;">
             <i style="cursor: pointer;" (click)="moveRight(selectedItem)" class="material-icons md-inherit">keyboard_arrow_right</i>
           </a>
 

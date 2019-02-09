@@ -9,7 +9,7 @@ module.exports = function () {
     if (data.role !== "addmin") findCondition = {
       visible: true
     };
-    return Packs.find({});
+    return Packs.find({}).sort({order : 1});
   }
 
 
@@ -229,7 +229,7 @@ module.exports = function () {
       visible: true
     };
   }
-    let packs = await Packs.find({});
+    let packs = await Packs.find({}).sort({order : 1});
     let weapons = await Weapons.find(findCondition)
     return  {packs: packs, weapons: weapons}
   }
@@ -284,24 +284,6 @@ module.exports = function () {
         }
         if(dbData[i].opname && dbData[i].opname == "EDIT"){
           let arr = dbData[i]
-
-          // if(arr.metarials.length > 0){
-          //   for(let k=0; k<arr.metarials.length; k++){
-          //     delete arr.metarials[k]._id
-          //   }
-          // }
-          // if(arr.colors.length > 0){
-          //   for(let k=0; k<arr.colors.length; k++){
-          //     delete arr.colors[k]._id
-          //   }
-          // }
-          // if(arr.patterns.length > 0){
-          //   for(let k=0; k<arr.patterns.length; k++){
-          //     delete arr.patterns[k]._id
-          //   }
-          // }
-
-          //let newPack = new Packs(arr);
           let temp = await Packs.update({_id : dbData[i]._id},{$set : arr}, {new : true});
         }
         else if (dbData[i].metarials.length > 0) {

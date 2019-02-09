@@ -132,6 +132,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
         this.packtype = this.type;
         this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
+      
         this.selectedPack = null;
         this.selectedItem = null;
         this.allitemSelected = true;
@@ -561,6 +562,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
 
         this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
+        this.packArray.sort(this.customizerDataService.compare);
         console.log(this.packArray);
     }
 
@@ -583,6 +585,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     // }
 
     async addPack() {
+      let order = this.customizerDataService.getOrder(this.packArray)
         var obj: any = {
             name: this.packName,
             type: this.packtype,
@@ -591,7 +594,8 @@ export class AppearanceControlsComponent implements OnDestroy {
             patterns: [],
             metarials: [],
             visible: true,
-            opname : "ADD"
+            opname: "ADD",
+            order : order
         }
         //const input = this.apiService.prepareNodeJSRequestObject("packs", "addPack", obj)
         //await this.apiService.execute(input, false);
@@ -982,8 +986,6 @@ export class AppearanceControlsComponent implements OnDestroy {
         obj.name = this.packName
         //const input = this.apiService.prepareNodeJSRequestObject("packs", "editPack", obj)
         //await this.apiService.execute(input, false);
-        let i = _.findIndex(this.allpacks, function (t) { return t._id == obj.packid })
-        this.allpacks[i].name = obj.name
         let k = _.findIndex(this.packArray, function (t) { return t._id == obj.packid })
         this.packArray[k].name = obj.name
 
@@ -994,6 +996,61 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.onAddAndUpdate();
         this.hideModal("addPack");
         this.isEdit = false;
+    }
+
+    async movePackLeft(data) {
+      let order = data.order
+      var self = this
+
+      let k = _.findIndex(this.packArray, function (t) { return t._id == data._id })
+
+      if (k > -1 && k != 0) {
+        this.packArray[k].order = this.packArray[k - 1].order
+        this.packArray[k - 1].order = order
+        this.packArray.sort(this.customizerDataService.compare);
+      }
+
+      let j = _.findIndex(this.customizerDataService.dbData, function (t) { return t._id == data._id })
+      let l = _.findIndex(this.customizerDataService.dbData, function (t) { return t._id == self.packArray[k]._id })
+
+      if (j > -1 && j != 0) {
+        this.customizerDataService.dbData[j].order = this.customizerDataService.dbData[l].order
+        this.customizerDataService.dbData[l].order = order
+        this.customizerDataService.dbData[l].opname = "EDIT"
+        this.customizerDataService.dbData[j].opname = "EDIT"
+        this.customizerDataService.dbData.sort(this.customizerDataService.compare);
+      }
+      this.onAddAndUpdate();
+      this.hideModal("addPack");
+      this.isEdit = false;
+    }
+
+    async movePackRight(data) {
+      let order = data.order
+      var self = this
+
+      let k = _.findIndex(this.packArray, function (t) { return t._id == data._id })
+      let max = this.customizerDataService.getOrder(this.packArray)
+
+      if (k > -1 && order < max - 1) {
+        this.packArray[k].order = this.packArray[k + 1].order
+        this.packArray[k + 1].order = order
+        this.packArray.sort(this.customizerDataService.compare);
+      }
+
+      let j = _.findIndex(this.customizerDataService.dbData, function (t) { return t._id == data._id })
+      let l = _.findIndex(this.customizerDataService.dbData, function (t) { return t._id == self.packArray[k]._id })
+
+      if (j > -1 && order < max - 1) {
+        this.customizerDataService.dbData[j].order = this.customizerDataService.dbData[l].order
+        this.customizerDataService.dbData[l].order = order
+        this.customizerDataService.dbData[l].opname = "EDIT"
+        this.customizerDataService.dbData[j].opname = "EDIT"
+        this.customizerDataService.dbData.sort(this.customizerDataService.compare);
+      }
+      this.onAddAndUpdate();
+      this.hideModal("addPack");
+      this.isEdit = false;
     }
 
     openDeletePack(pack) {

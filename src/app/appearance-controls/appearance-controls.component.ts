@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild, NgZone } from '@angular/core';
+import { Component, HostListener , OnDestroy, ViewChild, NgZone } from '@angular/core';
 import {
     AppearanceOption,
     AppearanceOptionGroup,
@@ -71,6 +71,21 @@ export class AppearanceControlsComponent implements OnDestroy {
             this.viewerReset();
         });
         this.getPacks();
+
+        //document.addEventListener("click", function () {
+        //  $('a').removeClass('active')
+        //  console.log(this)
+        //});
+    }
+
+    @HostListener('document:click', ['$event'])
+    documentClick(event: MouseEvent) {
+      if (this.outside) {
+        $('a').removeClass('active');
+        this.selectedItem = null;
+      } else {
+        this.outside = true
+      }
     }
 
     name: any;
@@ -96,6 +111,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     patternImage: any = "";
     Packs: any = []
     deletedPack = []
+    outside = true
 
 
     undoManagerLimit() {
@@ -510,21 +526,25 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
     }
     openAddPackModel() {
+      this.outside = false
         this.packName = "";
         this.isEdit = false;
         this.showModal('addPack')
     }
 
     hideModal(id) {
+      this.outside = false
         this.manageModel(id, false);
         this.isEdit = false
     }
 
     showModal(id) {
+      this.outside = false
         this.manageModel(id, true);
     }
 
     manageModel(id, visible) {
+      this.outside = false
         visible ? $('#' + id).show() : $('#' + id).hide()
     }
 
@@ -554,6 +574,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     selectedPack = null;
     selectPack(pack) {
+      this.outside = false
         this._ngZone.run(() => {
             if (pack) {
                 this.selectedPack = pack;
@@ -568,6 +589,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     async addPack() {
+      this.outside = false
       let order = this.customizerDataService.getOrder(this.packArray)
         var obj: any = {
             name: this.packName,
@@ -590,6 +612,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     openModel() {
+      this.outside = false
         if (this.selectedPack === null) {
             alert("please select at pack before adding ");
             return;
@@ -694,6 +717,7 @@ export class AppearanceControlsComponent implements OnDestroy {
 
 
     async addMaterial() {
+      this.outside = false
         var obj: any = {};
         var metarials = [];
         obj.packid = this.selectedPack._id;
@@ -774,6 +798,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
     selectedItem = null;
     async editOption() {
+      this.outside = false
         this.isEdit = true
         this.packid = this.selectedItem.pack_id;
         var type = this.packtype;
@@ -898,6 +923,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     openEditPack(pack) {
+      this.outside = false
         this.isEdit = true;
         this.packid = pack._id
         this.packName = pack.name
@@ -905,6 +931,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async editPack() {
+      this.outside = false
         var obj: any = {};
         obj.packid = this.packid
         obj.name = this.packName
@@ -921,6 +948,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async movePackLeft(data) {
+      this.outside = false
       let order = data.order
       var self = this
 
@@ -948,6 +976,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async movePackRight(data) {
+      this.outside = false
       let order = data.order
       var self = this
 
@@ -976,11 +1005,13 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     openDeletePack(pack) {
+      this.outside = false
         this.packid = pack._id
         this.showModal('deletPackModel');
     }
 
     async deletePack() {
+      this.outside = false
         var obj: any = {};
         obj.packid = this.packid;
         let i = _.findIndex(this.customizerDataService.dbData, function (t) { return t._id == obj.packid })
@@ -993,6 +1024,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async deployPackData() {
+      this.outside = false
       var obj: any = { dbData: this.customizerDataService.dbData, deleted: this.customizerDataService.deleted, weapons: this.customizerDataService.dbWeapons, deletedPack: this.deletedPack }
         const input = this.apiService.prepareNodeJSRequestObject("packs", "deployPack", obj)
         await this.apiService.execute(input, false);
@@ -1001,12 +1033,14 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     setVisibleofWeapon(weapons, value) {
+      this.outside = false
       var obj: any = { weapons: weapons, value: value }
       this.customizerDataService.setVisibleofWeapon(obj);
       this.onAddAndUpdate();
     }
 
     moveLeft(data) {
+      this.outside = false
       var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
       this.customizerDataService.moveLeft(obj);
       this.onAddAndUpdate();
@@ -1014,9 +1048,12 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     moveRight(data) {
+      this.outside = false
       var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
       this.customizerDataService.moveRight(obj);
       this.onAddAndUpdate();
       this.selectedItem = null
     }
+  
+    
 }

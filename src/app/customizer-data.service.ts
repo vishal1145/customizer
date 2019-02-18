@@ -452,7 +452,7 @@ export class CustomizerDataService {
   }
 
   moveLeft(data) {
-
+    var selectedItemTemp = null;
     if (data.type == "MATERIALS") {
       let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
       if (i > -1) {
@@ -462,7 +462,8 @@ export class CustomizerDataService {
           this.dbData[i].metarials[j].order = this.dbData[i].metarials[j - 1].order
           this.dbData[i].metarials[j].opname = 'EDIT'
           this.dbData[i].metarials[j - 1].order = data.order
-          this.dbData[i].metarials[j-1].opname = 'EDIT'
+          this.dbData[i].metarials[j - 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].metarials[j];
         }
       }
     }
@@ -476,6 +477,7 @@ export class CustomizerDataService {
           this.dbData[i].colors[j].opname = 'EDIT'
           this.dbData[i].colors[j - 1].order = data.order
           this.dbData[i].colors[j - 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].colors[j]
         }
       }
     }
@@ -489,15 +491,17 @@ export class CustomizerDataService {
           this.dbData[i].patterns[j].opname = 'EDIT'
           this.dbData[i].patterns[j - 1].order = data.order
           this.dbData[i].patterns[j - 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].patterns[j]
         }
       }
     }
-    localStorage.setItem("Packs", JSON.stringify(this.dbData))
+    localStorage.setItem("Packs", JSON.stringify(this.dbData));
+    return selectedItemTemp;
   }
 
 
   moveRight(data) {
-
+    var selectedItemTemp = null;
     if (data.type == "MATERIALS") {
       let i = _.findIndex(this.dbData, function (t) { return t._id == data.packid })
       if (i > -1) {
@@ -509,6 +513,7 @@ export class CustomizerDataService {
           this.dbData[i].metarials[j].opname = 'EDIT'
           this.dbData[i].metarials[j + 1].order = data.order
           this.dbData[i].metarials[j + 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].metarials[j];
         }
       }
     }
@@ -523,6 +528,7 @@ export class CustomizerDataService {
           this.dbData[i].colors[j].opname = 'EDIT'
           this.dbData[i].colors[j + 1].order = data.order
           this.dbData[i].colors[j + 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].colors[j]
         }
       }
     }
@@ -537,10 +543,27 @@ export class CustomizerDataService {
           this.dbData[i].patterns[j].opname = 'EDIT'
           this.dbData[i].patterns[j + 1].order = data.order
           this.dbData[i].patterns[j + 1].opname = 'EDIT'
+          selectedItemTemp = this.dbData[i].patterns[j]
         }
       }
     }
     localStorage.setItem("Packs", JSON.stringify(this.dbData))
+    return selectedItemTemp;
+  }
+
+  getUIFORMATDATA(item_id) {
+    var uidata = this.prepareData();
+    console.log(uidata);
+    for (var i = 0; i < uidata.commonSections.length; i++) {
+      var og = uidata.commonSections[i].optionGroups;
+      for (var j = 0; j < (og || []).length; j++) {
+        var options = og[j].options;
+        var index = (options || []).findIndex((o) => o._id === item_id)
+        if (index >= 0) {
+          return og[j].options[index];
+        }
+      }
+    }
   }
 
   weaponsDataLocal() {

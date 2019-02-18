@@ -1,4 +1,4 @@
-<div class="mt-2 mb-2 col-12" style="text-align: right;padding-right: 20px;line-height: 65px;" *ngIf="isAdmin">
+<div class="mt-2 mb-2 col-12" style="text-align: right;padding-right: 20px;" *ngIf="isAdmin">
   <button style="background: #444444; border: #444444;" (click)="deployPackData()" type="button" class="btn btn-danger">Deploy</button>
 </div>
 <div class="container-fluid">
@@ -129,7 +129,8 @@
           <a class="section-option" href="#"
              *ngIf="allitemSelected || (selectedPack && selectedPack._id === option.pack_id)"
              [class.first-of-set]="isFirst"
-             [class.active]=" (option === selectedOption(optionGroup))"
+             [class.active1]=" (option === selectedOption(optionGroup))"
+             [class.active]="selectedOption1(option, optionGroup)"
              (click)="optionClicked($event, optionGroup, option)">
             <div class="display" [id]="option.displayImg ? ('url(\'' + option.displayImg + '\')') : ''" [style.backgroundColor]="option.displayColor || ''"
                  [ngStyle]="{'background-image': 'url(' + option.displayImg + ')'}"></div>

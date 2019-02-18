@@ -80,7 +80,8 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     @HostListener('document:click', ['$event'])
     documentClick(event: MouseEvent) {
-      if (this.outside) {
+      var currentTarget: any = event.currentTarget
+      if (this.outside && currentTarget.activeElement.nodeName == "BODY") {
         $('a').removeClass('active');
         this.selectedItem = null;
       } else {
@@ -150,8 +151,8 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.packtype = this.type;
         this.packArray = this.allpacks.filter((p) => p.type == this.packtype);
       
-        this.selectedPack = null;
-        this.selectedItem = null;
+        //this.selectedPack = null;
+        //this.selectedItem = null;
         this.allitemSelected = true;
         return this.stopEvent(event);
     }
@@ -356,7 +357,21 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     selectedOption(optionGroup: AppearanceOptionGroup): AppearanceOption {
-        return this.activeTracking().chosenGroupOption.get(optionGroup);
+      var toreturn = this.activeTracking().chosenGroupOption.get(optionGroup);
+      //console.log(toreturn);
+      return toreturn;
+    }
+
+
+    selectedOption1(option, optionGroup) {
+      if (this.selectedItem) {
+        if (this.selectedItem._id && this.selectedItem._id === option._id)
+          return true;
+        else
+          return this.selectedItem.name === option.name && this.selectedItem.displayImg === option.displayImg;
+      }        
+      else
+        return false;
     }
 
     setupOptionTracking(commonSections: AppearanceSection[], weapon: WeaponCustomization) {
@@ -404,20 +419,23 @@ export class AppearanceControlsComponent implements OnDestroy {
                 });
             });
 
-        this.selectedItems.set(weapon, {
-            activeSection: (commonSections.length !== 0) ? commonSections[resetIndex] : weapon.customizations[0],
-            resetActive: false,
-            chosenGroupOption: groupOptionTracking
-        });
+
+        var item = this.selectedItems.get(weapon);
+        item.activeSection = (commonSections.length !== 0) ? commonSections[resetIndex] : weapon.customizations[0];
+        item.resetActive = true;
+        //item.chosenGroupOption = item.chosenGroupOption;
+        console.log(item);
+        this.selectedItems.set(weapon, item);
     }
 
     stopEvent(event: MouseEvent) {
         if (event) {
             event.preventDefault();
             event.stopPropagation();
-        }
-
+      }
+       
         return false;
+        
     }
 
     toggleChoices(event: MouseEvent) {
@@ -479,7 +497,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         }
 
         customizationData.weapons.forEach((weapon, wIdx) => {
-            this.setupOptionTrackingByCommonSection(customizationData.commonSections || [], weapon,this.sectionIndex);
+            this.setupOptionTrackingByCommonSection(customizationData.commonSections || [], weapon, this.sectionIndex);
         });
 
         this.chooseWeapon(null, customizationData.weapons[0]);
@@ -741,7 +759,7 @@ export class AppearanceControlsComponent implements OnDestroy {
           this.customizerDataService.addDataOnPacks(obj);
           this.onAddAndUpdate();
           this.hideModal('my-modal');
-          this.selectedItem = null
+          //this.selectedItem = null
         }
     }
 
@@ -750,6 +768,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async addColor() {
+      this.outside = false
       var obj: any = {};
       var colors = [];
       obj.packid = this.selectedPack._id;
@@ -769,11 +788,12 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal("addColor");
-        this.selectedItem = null
+        //this.selectedItem = null
       }
     }
 
     async addPatternse() {
+      this.outside = false
       var obj: any = {};
       var patterns = [];
       obj.packid = this.selectedPack._id;
@@ -793,7 +813,7 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.addDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('patterns')
-        this.selectedItem = null
+        //this.selectedItem = null
       }
     }
     selectedItem = null;
@@ -831,6 +851,7 @@ export class AppearanceControlsComponent implements OnDestroy {
     }
 
     async editMaterial() {
+      this.outside = false
         var metarials: any = [
             {
                 name: this.name,
@@ -852,10 +873,11 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.editDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('my-modal');
-        this.selectedItem = null
+        //this.selectedItem = null
     }
 
     async editColor() {
+      this.outside = false
         var colors: any = [{
             name: this.colorName,
             code: this.colorCodeInColor,
@@ -868,10 +890,11 @@ export class AppearanceControlsComponent implements OnDestroy {
 
         this.onAddAndUpdate();
         this.hideModal('addColor');
-        this.selectedItem = null
+        //this.selectedItem = null
     }
 
     async editPatternse() {
+      this.outside = false
         var patterns: any = [{
             name: this.patternName,
             visible: this.visibleInPattern,
@@ -888,32 +911,36 @@ export class AppearanceControlsComponent implements OnDestroy {
         this.customizerDataService.editDataOnPacks(obj);
         this.onAddAndUpdate();
         this.hideModal('patterns');
-        this.selectedItem = null
+        //this.selectedItem = null
     }
 
     openDeleteModel() {
+      this.outside = false
         $('#deletModel').show()
     }
 
 
 
     async deleteData() {
+      this.outside = false
         var obj: any = { packid: this.selectedItem.pack_id, type: this.type, arrId: this.selectedItem._id };
         this.customizerDataService.deleteDataOnPack(obj);
         this.onAddAndUpdate();
         this.hideModal("deletModel");
-        this.selectedItem = null
+        //this.selectedItem = null
     }
 
     async setVisible(value) {
+      this.outside = false
         var obj: any = { packid: this.selectedItem.pack_id, type: this.type, value: value, arrId: this.selectedItem._id };
         this.customizerDataService.setVisibleOfPackData(obj);
         this.selectedItem.visible = value;
         this.onAddAndUpdate();
-        this.selectedItem = null
+        //this.selectedItem = null
     }
 
     async setVisibleofPack(pack: any, b) {
+      this.outside = false
         var obj: any = {};
         obj.packid = pack._id
         obj.value = b
@@ -1041,18 +1068,19 @@ export class AppearanceControlsComponent implements OnDestroy {
 
     moveLeft(data) {
       this.outside = false
+      console.log(this.selectedItem)
       var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
-      this.customizerDataService.moveLeft(obj);
+      var selectedItemTemp =  this.customizerDataService.moveLeft(obj);
       this.onAddAndUpdate();
-      this.selectedItem = null
+      this.selectedItem = this.customizerDataService.getUIFORMATDATA(selectedItemTemp._id);
     }
 
     moveRight(data) {
       this.outside = false
       var obj: any = { packid: data.pack_id, order: data.order, type: this.type, arrId: data._id };
-      this.customizerDataService.moveRight(obj);
+      var selectedItemTemp =this.customizerDataService.moveRight(obj);
       this.onAddAndUpdate();
-      this.selectedItem = null
+      this.selectedItem = this.customizerDataService.getUIFORMATDATA(selectedItemTemp._id);
     }
   
     

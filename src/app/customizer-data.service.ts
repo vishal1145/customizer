@@ -237,7 +237,7 @@ export class CustomizerDataService {
 
             option.name = temp[i].patterns[j].name
             option.displayImg = temp[i].patterns[j].image
-            option.interactionValue = temp[i].patterns[j].name
+            option.interactionValue = temp[i].patterns[j].image
             option.pack_id = temp[i]._id;
             option._id = temp[i].patterns[j]._id;
             option.visible = temp[i].patterns[j].visible;

@@ -84,25 +84,25 @@
     </div>
   </div>
 
-  <div class="row option-editor" *ngIf="selectedItem && isAdmin">
+  <div class="row option-editor" *ngIf="isAdmin">
     <div class="option-editor-options">
 
-      <a *ngIf="allitemSelected == false" class="editor-option editOption" style="cursor: pointer;">
+      <a *ngIf="allitemSelected == false && selectedItem" class="editor-option editOption" style="cursor: pointer;">
         <i style="cursor: pointer;" (click)="moveLeft(selectedItem)" class="material-icons md-inherit">keyboard_arrow_left</i>
       </a>
 
-      <a *ngIf="allitemSelected == false" class="editor-option editOption" style="cursor: pointer;">
+      <a *ngIf="allitemSelected == false && selectedItem" class="editor-option editOption" style="cursor: pointer;">
         <i style="cursor: pointer;" (click)="moveRight(selectedItem)" class="material-icons md-inherit">keyboard_arrow_right</i>
       </a>
 
-      <a class="editor-option toggleOptionVisibility" style="cursor: pointer;">
+      <a *ngIf="allitemSelected == false && selectedItem" class="editor-option toggleOptionVisibility" style="cursor: pointer;">
         <i *ngIf="selectedItem.visible" (click)="setVisible(false)" class="material-icons md-inherit">visibility</i>
         <i *ngIf="!selectedItem.visible" (click)="setVisible(true)" class="material-icons md-inherit">visibility_off</i>
       </a>
-      <a (click)="editOption()" class="editor-option editOption" style="cursor: pointer;">
+      <a *ngIf="allitemSelected == false && selectedItem" (click)="editOption()" class="editor-option editOption" style="cursor: pointer;">
         <i class="material-icons md-inherit">edit</i>
       </a>
-      <a (click)="openDeleteModel()" class="editor-option delOption" style="cursor: pointer;">
+      <a  *ngIf="allitemSelected == false && selectedItem"(click)="openDeleteModel()" class="editor-option delOption" style="cursor: pointer;">
         <i class="material-icons md-inherit">close</i>
       </a>
     </div>
